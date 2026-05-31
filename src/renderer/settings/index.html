@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>NanoLyrics Settings</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="settings-header">
+        <h2 id="settings-title">Widget Settings</h2>
+    </div>
+
+    <!-- Tabs Navigation -->
+    <div class="tabs-nav">
+        <button class="tab-btn active" data-tab="visuals" id="tab-visuals-label">Visuals</button>
+        <button class="tab-btn" data-tab="hotkeys" id="tab-hotkeys-label">Hotkeys</button>
+        <button class="tab-btn" data-tab="plugins" id="tab-plugins-label">Plugins</button>
+        <button class="tab-btn" data-tab="advanced" id="tab-advanced-label">Advanced</button>
+    </div>
+
+    <div class="tabs-container">
+        <!-- Tab: Visuals -->
+        <div class="tab-pane active" id="pane-visuals">
+            <div class="section designer">
+                <h3 id="visual-designer-title">Visual Designer & Styling</h3>
+                
+                <div id="live-preview-container">
+                    <div id="live-preview-box">
+                        <span class="preview-line past">Previous lyric line</span>
+                        <span class="preview-line active">Active Syncing Lyrics</span>
+                        <span class="preview-line">Next upcoming lyric</span>
+                    </div>
+                </div>
+
+                <div class="designer-toolbar">
+                    <div class="toolbar-row">
+                        <div class="font-picker-container">
+                            <input type="text" id="fontFamily" class="font-input" placeholder="Search or type font name...">
+                            <div id="font-dropdown" class="font-dropdown hidden"></div>
+                        </div>
+                        <button class="tool-btn" id="toggleBold" title="Bold">B</button>
+                        <div class="tool-group">
+                            <span class="tool-icon">T</span>
+                            <input type="number" id="fontSize" min="8" max="120">
+                        </div>
+                        <div class="tool-group">
+                            <span class="tool-icon">↔</span>
+                            <input type="number" id="letterSpacing" step="0.5">
+                        </div>
+                    </div>
+
+                    <div class="toolbar-row">
+                        <div class="tool-group color">
+                            <label id="active-color-label">Active</label>
+                            <input type="color" id="activeColorPicker">
+                        </div>
+                        <div class="tool-group color">
+                            <label id="inactive-color-label">Inactive</label>
+                            <input type="color" id="inactiveColorPicker">
+                        </div>
+                        <div class="separator"></div>
+                        <div class="tool-group effect">
+                            <span class="tool-icon" title="Outline">O</span>
+                            <input type="number" id="outlineSize" step="0.5" min="0" max="10">
+                            <input type="color" id="outlineColorPicker">
+                        </div>
+                        <div class="tool-group effect">
+                            <span class="tool-icon" title="Shadow">S</span>
+                            <select id="shadowPreset">
+                                <option value="none" id="shadow-none">No Shadow</option>
+                                <option value="soft" id="shadow-soft">Soft Glow</option>
+                                <option value="hard" id="shadow-hard">Hard Drop</option>
+                                <option value="neon" id="shadow-neon">Neon Pulse</option>
+                            </select>
+                            <input type="color" id="shadowColorPicker">
+                        </div>
+                    </div>
+
+                    <div class="toolbar-row">
+                        <div class="tool-group toggle">
+                            <label class="checkbox-label">
+                                <input type="checkbox" id="boxedMode">
+                                <span id="box-label">Box</span>
+                            </label>
+                            <input type="color" id="boxColorPicker">
+                            <input type="number" id="boxOpacity" step="0.1" min="0" max="1" style="width:35px">
+                        </div>
+                        <div class="separator"></div>
+                        <div class="tool-group">
+                            <span class="tool-icon" title="Widget Opacity">W</span>
+                            <input type="number" id="widgetOpacity" step="0.1" min="0" max="1">
+                        </div>
+                        <div class="file-picker-group">
+                            <input type="text" id="backgroundImage" placeholder="BG Image URL/Path" class="designer-input">
+                            <button class="tool-btn" id="btn-browse-bg" title="Browse">📁</button>
+                        </div>
+                        <input type="text" id="borderImage" placeholder="Border Slice" class="designer-input" style="width:80px">
+
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tab: Hotkeys -->
+        <div class="tab-pane" id="pane-hotkeys">
+            <div class="section">
+                <h3 id="hotkeys-title">Hotkeys (Keybinds)</h3>
+                <div class="grid">
+                    <div>
+                        <label id="hk-lock-label">Lock/Unlock Widget</label>
+                        <input type="text" id="hk_lock" class="hotkey-input" readonly>
+                    </div>
+                    <div>
+                        <label id="hk-adv-label">Advance Synchronization</label>
+                        <input type="text" id="hk_adv" class="hotkey-input" readonly>
+                    </div>
+                    <div>
+                        <label id="hk-rew-label">Rewind Synchronization</label>
+                        <input type="text" id="hk_rew" class="hotkey-input" readonly>
+                    </div>
+                    <div>
+                        <label id="hk-vis-label">Show/Hide Widget</label>
+                        <input type="text" id="hk_vis" class="hotkey-input" readonly>
+                    </div>
+                    <div style="grid-column: span 2;">
+                        <label id="hk-puz-label">🧩 Open Title Puzzle Selector</label>
+                        <input type="text" id="hk_puz" class="hotkey-input" readonly>
+                    </div>
+                </div>
+                <p id="hotkey-hint" style="font-size:10px; color:#888; margin-top: 15px; line-height: 1.4;">Use modifiers: {modifier}, Shift, Alt. E.g. "{modifier}+Shift+P".</p>
+            </div>
+        </div>
+
+        <!-- Tab: Plugins -->
+        <div class="tab-pane" id="pane-plugins">
+            <div class="section">
+                <h3 id="plugins-title">Plugin Management</h3>
+                <p id="plugins-hint" style="font-size: 11px; color: #888; margin-bottom: 15px;">Manage and configure application extensions. Enabled plugins load on startup.</p>
+                <div id="plugin-list">
+                    <!-- Dynamically populated -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Tab: Advanced -->
+        <div class="tab-pane" id="pane-advanced">
+            <div class="section">
+                <h3 id="cache-mgmt-title">Cache & Local File Management</h3>
+                <div class="cache-row">
+                    <div>
+                        <div id="lrc-cache-label" style="font-weight: bold; font-size: 13px;">Synced Lyrics (.lrc)</div>
+                        <div style="font-size: 11px; color: #888;" id="lrcSizeLabel">Calculating...</div>
+                    </div>
+                    <button class="btn-danger" id="clearLrcBtn">Clear .lrc Cache</button>
+                </div>
+                <div class="cache-row">
+                    <div>
+                        <div id="overrides-cache-label" style="font-weight: bold; font-size: 13px;">Puzzle & Sync Overrides (.json)</div>
+                        <div style="font-size: 11px; color: #888;" id="overridesSizeLabel">Calculating...</div>
+                    </div>
+                    <button class="btn-danger" id="clearOverridesBtn">Clear Overrides</button>
+                </div>
+                <p id="cache-hint" style="font-size:11px; color:#888; margin-top: 8px;">Files are stored natively as text in the user data directory. No heavy database is required.</p>
+            </div>
+
+            <div class="section">
+                <h3 id="support-lrclib-title">Support LRCLIB (API Provider)</h3>
+                <p id="support-message" style="font-size: 12px; line-height: 1.5; color: #ccc; margin-bottom: 10px;">NanoLyrics uses the freely available LRCLIB API. We are a humble effort to make good use of their service. Please consider supporting and donating to the official LRCLIB website.</p>
+                <button id="btn-visit-lrclib" style="width: 100%; background: #fff; color: #000;">Visit LRCLIB Website</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="settings-footer">
+        <button id="saveBtn">Save & Apply</button>
+    </div>
+
+    <!-- Hidden legacy inputs for compatibility -->
+    <input type="text" id="activeColor" style="display:none">
+    <input type="text" id="inactiveColor" style="display:none">
+    <input type="text" id="outlineColor" style="display:none">
+    <input type="text" id="shadowColor" style="display:none">
+    <input type="text" id="boxColor" style="display:none">
+    <input type="number" id="fontWeight" style="display:none">
+    <input type="number" id="shadowBlur" style="display:none">
+    <input type="number" id="shadowOffsetX" style="display:none">
+    <input type="number" id="shadowOffsetY" style="display:none">
+
+    <script src="renderer.js"></script>
+</body>
+</html>

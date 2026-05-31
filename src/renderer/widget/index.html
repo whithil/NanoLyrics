@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="lyrics-viewport">
+        <div id="lyrics-container">
+            <div class="lyric-line active" id="lyric-0">Awaiting playback...</div>
+        </div>
+    </div>
+    <div id="edit-overlay">
+        <button id="btn-help" class="help-btn" title="Help">?</button>
+        <h3 id="edit-mode-title">Edit Mode (Drag to Move)</h3>
+        <div>
+            <button class="btn" id="btn-settings">⚙️ Settings</button>
+            <button class="btn" id="btn-lock" style="background: var(--active-color); color: #000;">🔒 Lock</button>
+        </div>
+        <div id="hotkey-helper">
+            <!-- Dynamically populated chips -->
+        </div>
+    </div>
+    <script src="renderer.js"></script>
+</body>
+</html>

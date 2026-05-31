@@ -1,14 +1,15 @@
 {
   "name": "NanoLyrics",
-  "version": "0.1.0-alpha",
+  "version": "0.2.0-alpha",
   "description": "Ultra-lightweight Synced Lyrics Overlay Widget",
-  "main": "app.js",
+  "main": "src/main/main.js",
   "scripts": {
     "start": "electron .",
     "build-win": "electron-builder --win --x64"
   },
   "build": {
     "appId": "com.seuapp.id",
+    "productName": "NanoLyrics",
     "win": {
       "target": "portable",
       "icon": "assets/icon.ico"

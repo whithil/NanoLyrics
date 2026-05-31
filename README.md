@@ -9,15 +9,32 @@
 - **🪟 Seamless Floating Widget**: A borderless, fully transparent window that floats on top of all other applications.
 - **🖱️ Click-Through Mode**: In normal playback mode, the window ignores mouse clicks, allowing you to click, scroll, and drag windows behind the lyrics without obstruction.
 - **⚙️ Lock / Edit Toggle**:
-  - **Global Hotkey** (`Ctrl+Shift+L` or customize) or **System Tray Icon** toggles **Edit Mode**.
+  - **Global Hotkey** or **System Tray Icon** toggles **Edit Mode**.
   - **Edit Mode** disables click-through and shows a sleek, semi-transparent overlay where you can reposition, resize, and configure the widget.
-- **🔊 Zero-Dependency Media Monitoring**:
-  - **Windows**: Seamlessly queries Windows Runtime (SMTC) via lightweight background PowerShell calls—no heavy native C++ modules to compile.
+- **🔊 Multi-Platform Media Monitoring**:
+  - **Windows**: Queries SMTC via a background worker thread.
   - **macOS**: Communicates via AppleScript with Spotify and Apple Music.
-  - **Linux**: Interacts via `dbus` / MPRIS interfaces.
-- **⏱️ Seamless Timing & Simulation**: If a player doesn't expose active progress, NanoLyrics automatically starts a local millisecond-accurate timer from the moment a new track starts. It syncs automatically whenever active progress updates are available.
-- **🌐 LRCLIB Integration**: Fetches synced `.lrc` files automatically based on the artist and track title, falling back to instant search.
-- **📂 Local Caching**: Saves `.lrc` files to a custom cache directory (defaulting to safe user folders inside AppData / local storage) so you can enjoy offline lyrics without administrative privileges.
+  - **Linux**: Interacts via MPRIS (`playerctl`).
+- **🌐 Internationalization (i18n)**: Support for English (en-US), Portuguese (pt-BR), and French (fr-FR). Automatically detects system language.
+- **🎨 Advanced Customization**:
+  - **Text Appearance**: Customize font family, weight, size, active/inactive colors, outlines, and shadows.
+  - **YouTube-Style Box**: Optional "Boxed Mode" for better readability on busy backgrounds.
+  - **Widget Styling**: Adjust overall opacity and even set custom background images with CSS border-image support.
+- **🧩 Title Puzzle Selector**: If lyrics aren't found automatically, use the Title Puzzle Selector to pick specific parts of the artist/title to refine the search.
+- **🎬 VLC Web Support**: Dedicated plugin to fetch metadata from VLC Media Player when SMTC is unavailable.
+
+---
+
+## 🎬 VLC Support
+
+To use NanoLyrics with VLC Media Player, you must enable its Web Interface:
+1. Open VLC -> **Tools** -> **Preferences**.
+2. At the bottom, under **Show settings**, select **All**.
+3. Go to **Interface** -> **Main interfaces**.
+4. Check the **Web** checkbox.
+5. Go to **Interface** -> **Main interfaces** -> **Lua**.
+6. Set a **Password** (the default in our plugin is `nanolyrics`).
+7. Restart VLC.
 
 ---
 
@@ -39,19 +56,10 @@ npm start
 ```
 
 ### 4. Build Executables
-To package the app into a single standalone `.exe` or executable for your platform:
+To package the app into a single standalone executable:
 ```bash
-npm run build
+npm run build-win
 ```
-
----
-
-## 🎹 Hotkeys & Controls
-
-| Action | Shortcut (Windows/Linux) | Shortcut (macOS) | Description |
-| :--- | :--- | :--- | :--- |
-| **Toggle Edit Mode** | `Ctrl + Shift + L` | `Cmd + Shift + L` | Locks/unlocks the widget for resizing and positioning. |
-| **Close App** | Tray Menu -> Quit | Tray Menu -> Quit | Safely exits the background process. |
 
 ---
 
@@ -59,9 +67,15 @@ npm run build
 
 ```
 NanoLyrics/
-├── app.js          # Core Single-File Electron codebase (Auto-generates index.html)
-├── package.json    # Project metadata, scripts, and dependencies
-└── README.md       # Project overview and usage guidelines
+├── src/
+│   ├── main/          # Main process logic (Config, Media, i18n, etc.)
+│   ├── renderer/      # UI components (Widget, Settings, Puzzle)
+│   └── monitors/      # Platform-specific media monitors
+├── locales/           # i18n language files (JSON)
+├── docs/              # Technical documentation and Architecture
+├── assets/            # App icons and internal assets
+├── package.json       # Project metadata and scripts
+└── README.md          # Project overview
 ```
 
 ---

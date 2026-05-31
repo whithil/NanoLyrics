@@ -1,18 +1,24 @@
 /**
  * NanoLyrics Plugin: osu!lazer Metadata Enhancer
+ * Professionalized for v0.2.0
  */
 
 const { net } = require('electron');
 const { exec } = require('child_process');
 
 class OsuLazerPlugin {
+    constructor() {
+        this.name = 'osu!lazer Support';
+        this.description = 'Enhances metadata and cleans up difficulty tags for better lyrics matching in osu!lazer.';
+    }
+
     onLoad(updateApp) {
         this.updateApp = updateApp;
         this.lastTitle = '';
         this.isOsuActive = false;
-        this.pollIntervalId = null; // To store the interval ID
+        this.pollIntervalId = null;
 
-        console.log('[osu!lazer] Plugin carregado.');
+        console.log('[osu!lazer] Plugin loaded.');
         
         this.startPolling(2000); // Start with default 2-second polling
     }
@@ -22,11 +28,11 @@ class OsuLazerPlugin {
             clearInterval(this.pollIntervalId);
         }
         this.pollIntervalId = setInterval(() => this.pollOsuData(), interval);
-        console.log(`[osu!lazer] Polling iniciado com intervalo de ${interval}ms.`);
+        console.log(`[osu!lazer] Polling started with ${interval}ms interval.`);
     }
 
     pollOsuData() {
-        // 1. Tentar gosuMemory API (Prioridade: Alta precisão)
+        // 1. Try gosuMemory API (Priority: High precision)
         const request = net.request('http://127.0.0.1:24050/json');
         
         request.on('response', (response) => {
@@ -38,34 +44,25 @@ class OsuLazerPlugin {
                     if (response.statusCode !== 200) throw new Error(`Status ${response.statusCode}`);
                     const data = JSON.parse(body);
                     
-                    // Defensive check for nested properties
                     const title = data?.menu?.bm?.metadata?.title;
                     const artist = data?.menu?.bm?.metadata?.artist;
                     const pos = (data?.menu?.bm?.time?.current || 0) / 1000;
                     const dur = (data?.menu?.bm?.time?.full || 0) / 1000;
                     const status = data?.menu?.state === 2 ? 'Playing' : 'Paused';
 
-                    if (this.debugPollingActive) {
-                        console.log(`[osu!lazer] [DEBUG] API Sincronizada: ${artist} - ${title} [${status}]`);
-                    }
-
                     if (title !== undefined && title !== null) {
                         this.isOsuActive = true;
                         this.updateApp(title || 'Unknown Title', artist || 'Unknown Artist', pos, dur, status);
-                    } else if (this.debugPollingActive) {
-                        console.warn('[osu!lazer] [DEBUG] JSON recebido mas "title" está ausente.');
+                    } else {
+                        this.sniffWindowTitle();
                     }
                 } catch (e) { 
-                    if (this.debugPollingActive) console.warn('[osu!lazer] [DEBUG] Erro no processamento:', e.message);
                     this.sniffWindowTitle();
                 }
             });
         });
 
-        request.on('error', (err) => {
-            if (this.debugPollingActive) {
-                console.log(`[osu!lazer] [DEBUG] API indisponível (${err.message}). Tentando Window Sniffing...`);
-            }
+        request.on('error', () => {
             this.sniffWindowTitle();
         });
 
@@ -73,13 +70,10 @@ class OsuLazerPlugin {
     }
 
     sniffWindowTitle() {
-        if (this.debugPollingActive) {
-            console.log('[osu!lazer] [DEBUG] Consultando título da janela via PowerShell...');
-        }
+        // PowerShell command to get the main window title of an osu! process
         const cmd = 'powershell -NoProfile -ExecutionPolicy Bypass -Command "Get-Process -Name *osu* -ErrorAction SilentlyContinue | Where-Object {$_.MainWindowTitle -like \'osu!*\'} | Select-Object -ExpandProperty MainWindowTitle"';
         exec(cmd, (err, stdout) => {
             if (err || !stdout.trim()) {
-                if (err && this.debugPollingActive) console.error('[osu!lazer] [DEBUG] PowerShell falhou:', err.message);
                 this.isOsuActive = false;
                 return;
             }
@@ -87,7 +81,7 @@ class OsuLazerPlugin {
             const lines = stdout.trim().split(/\r?\n/);
             const rawTitle = lines[lines.length - 1].trim();
             
-            // Regex: osu! [Artist - Title [Difficulty]]
+            // Regex match for: osu! [Artist - Title [Difficulty]]
             const lazerMatch = rawTitle.match(/osu!\s+\[(.+?)\s-\s(.+?)\s\[.+?\]\]/);
             
             if (lazerMatch) {
@@ -97,7 +91,7 @@ class OsuLazerPlugin {
                 if (title !== this.lastTitle) {
                     this.lastTitle = title;
                     this.isOsuActive = true;
-                    // Window title não dá progresso real, reportamos como 0
+                    // Window title doesn't provide real progress, reporting 0
                     this.updateApp(title, artist, 0, 0, 'Playing');
                 }
             }
@@ -105,11 +99,10 @@ class OsuLazerPlugin {
     }
 
     /**
-     * Intercepta os metadados e remove elementos específicos do osu! que atrapalham a busca de letras.
+     * Intercepts metadata and removes osu!-specific elements that might hinder lyrics searching.
      */
     onTransformMetadata(data) {
         if (data.title) {
-            // Remove elementos específicos do osu! que aparecem no RPC/Título da Janela
             data.title = data.title
                 .replace(/\[[^\]]*\]\s*$/g, '') 
                 .replace(/\s*\([^)]*\)\s*$/g, '')
@@ -121,8 +114,7 @@ class OsuLazerPlugin {
     }
 
     onMediaUpdate(data) {
-        // Exemplo: Logging do mapper se ainda estiver presente nos dados originais
-        // (Aqui 'data' já passou pelo transformMetadata na app principal)
+        // Metadata processing hook
     }
 }
 
