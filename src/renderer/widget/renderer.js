@@ -146,8 +146,19 @@ function applyConfig(config) {
     document.body.classList.toggle('boxed-mode', config.boxedMode);
     root.style.setProperty('--box-color', hexToRgba(config.boxColor, config.boxOpacity));
     root.style.setProperty('--widget-opacity', config.widgetOpacity);
-    root.style.setProperty('--bg-image', config.backgroundImage ? `url("${config.backgroundImage.replace(/\\/g, '/')}")` : 'none');
-    root.style.setProperty('--border-image', config.borderImage || 'none');
+    
+    const bgUrl = config.backgroundImage ? `url("${config.backgroundImage.replace(/\\/g, '/')}")` : 'none';
+    let borderImageValue = config.borderImage || 'none';
+    
+    if (borderImageValue !== 'none') {
+        root.style.setProperty('--bg-image', 'none');
+        if (!borderImageValue.includes('url(') && !borderImageValue.includes('gradient(') && bgUrl !== 'none') {
+            borderImageValue = `${bgUrl} ${borderImageValue}`;
+        }
+    } else {
+        root.style.setProperty('--bg-image', bgUrl);
+    }
+    root.style.setProperty('--border-image', borderImageValue);
 
     showTimestamps = config.showTimestamps;
     renderLyrics();

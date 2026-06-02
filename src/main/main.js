@@ -209,6 +209,16 @@ ipcMain.on('clear-cache', (event, type) => {
     event.reply('cache-info', { lrcSize, overridesSize });
 });
 
+ipcMain.on('set-language', (event, locale) => {
+    configManager.setConfig({ language: locale || null });
+    i18n.init();
+    const translations = i18n.getTranslations();
+    if (windowManager.settingsWindow) windowManager.settingsWindow.webContents.send('apply-translations', translations);
+    if (windowManager.titlePartsWindow) windowManager.titlePartsWindow.webContents.send('apply-translations', translations);
+    windowManager.sendToWidget('apply-translations', translations);
+    windowManager.buildTray();
+});
+
 ipcMain.on('save-settings', (event, settings) => {
     configManager.setConfig(settings);
     i18n.init(); // Reload language from config

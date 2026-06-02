@@ -121,9 +121,21 @@ function updatePreview() {
 
     const root = document.getElementById('live-preview-container');
     root.style.opacity = wo;
-    root.style.backgroundImage = bi ? `url("${bi.replace(/\\/g, '/')}")` : 'none';
     root.style.backgroundSize = 'cover';
-    root.style.borderImage = bri || 'none';
+
+    if (bri) {
+        root.style.backgroundImage = 'none';
+        if (bri.includes('url(') || bri.includes('gradient(')) {
+            root.style.borderImage = bri;
+        } else if (bi) {
+            root.style.borderImage = `url("${bi.replace(/\\/g, '/')}") ${bri}`;
+        } else {
+            root.style.borderImage = bri;
+        }
+    } else {
+        root.style.backgroundImage = bi ? `url("${bi.replace(/\\/g, '/')}")` : 'none';
+        root.style.borderImage = 'none';
+    }
 
     const outlineStyle = `calc(${os}px * -1) calc(${os}px * -1) 0 ${oc}, ${os}px calc(${os}px * -1) 0 ${oc}, calc(${os}px * -1) ${os}px 0 ${oc}, ${os}px ${os}px 0 ${oc}`;
     const shadowStyle = `${sx}px ${sy}px ${sb}px ${sc}`;
@@ -272,6 +284,10 @@ function applyTranslations(data) {
     document.getElementById('saveBtn').innerText = t('settings.save_apply');
     renderHotkeys();
 }
+
+document.getElementById('appLanguage').onchange = (e) => {
+    ipcRenderer.send('set-language', e.target.value);
+};
 
 function renderHotkeys() {
     if (!appConfig.hotkeys) return;

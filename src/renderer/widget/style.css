@@ -33,6 +33,7 @@ body {
     background-image: var(--bg-image);
     background-size: cover;
     background-repeat: no-drag;
+    border: 1px solid transparent;
     border-image: var(--border-image);
 }
 

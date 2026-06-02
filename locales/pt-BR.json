@@ -3,8 +3,8 @@
         "awaiting_playback": "A aguardar reprodução...",
         "no_lyrics_found": "Sem Letras",
         "edit_mode_title": "Modo de Edição (Arraste para Mover)",
-        "settings": "⚙️ Definições",
-        "lock": "🔒 Trancar",
+        "settings": "Definições",
+        "lock": "Trancar",
         "ready_for_music": "NanoLyrics: Pronto para música...",
         "hk_lock": "Trancar",
         "hk_sync": "Sinc",
@@ -95,12 +95,12 @@
         "search": "Pesquisar Música"
     },
     "tray": {
-        "unlock": "🔓 Destrancar Widget",
-        "lock": "🔒 Trancar Widget",
+        "unlock": "Destrancar Widget",
+        "lock": "Trancar Widget",
         "show": "Mostrar Letras",
         "hide": "Esconder Letras",
         "fix_title": "Corrigir título 🧩 e tentar novamente",
-        "settings": "⚙️ Definições",
+        "settings": "Definições",
         "help": "Ajuda",
         "quit": "Sair"
     },
