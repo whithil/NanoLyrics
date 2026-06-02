@@ -36,7 +36,7 @@ function renderHotkeyHelper() {
         { name: t('widget.hk_lock'), key: appConfig.hotkeys.toggleLock },
         { name: t('widget.hk_sync'), key: appConfig.hotkeys.advanceSync },
         { name: t('widget.hk_vis'), key: appConfig.hotkeys.toggleWidget },
-        { name: t('widget.hk_puz'), key: appConfig.hotkeys.togglePuzzle }
+        { name: t('widget.hk_puz'), key: appConfig.hotkeys.toggleTitleParts }
     ];
 
     keys.forEach(k => {

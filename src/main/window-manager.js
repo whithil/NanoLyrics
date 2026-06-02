@@ -2,12 +2,13 @@ const { BrowserWindow, screen, Tray, Menu, app, shell } = require('electron');
 const path = require('path');
 const configManager = require('./config-manager');
 const i18n = require('./i18n');
+const mediaMonitor = require('./media-monitor');
 
 class WindowManager {
     constructor() {
         this.mainWindow = null;
         this.settingsWindow = null;
-        this.puzzleWindow = null;
+        this.titlePartsWindow = null;
         this.tray = null;
         this.isLocked = true;
         this.isWidgetHidden = false;
@@ -94,6 +95,7 @@ class WindowManager {
             this.mainWindow.hide();
             this.isWidgetHidden = true;
         }
+        this.buildTray();
     }
 
     openSettingsWindow() {
@@ -119,14 +121,14 @@ class WindowManager {
         this.settingsWindow.on('closed', () => { this.settingsWindow = null; });
     }
 
-    togglePuzzleWindow(trackData) {
-        if (this.puzzleWindow) {
-            this.puzzleWindow.close();
-            this.puzzleWindow = null;
+    toggleTitlePartsWindow(trackData) {
+        if (this.titlePartsWindow) {
+            this.titlePartsWindow.close();
+            this.titlePartsWindow = null;
             return;
         }
 
-        this.puzzleWindow = new BrowserWindow({
+        this.titlePartsWindow = new BrowserWindow({
             width: 800,
             height: 400,
             transparent: true,
@@ -138,17 +140,17 @@ class WindowManager {
             }
         });
 
-        const indexPath = path.join(__dirname, '../renderer/puzzle/index.html');
-        this.puzzleWindow.loadFile(indexPath).then(() => {
-            this.puzzleWindow.webContents.send('load-puzzle', trackData);
+        const indexPath = path.join(__dirname, '../renderer/title-parts/index.html');
+        this.titlePartsWindow.loadFile(indexPath).then(() => {
+            this.titlePartsWindow.webContents.send('load-title-parts', trackData);
         });
 
-        this.puzzleWindow.on('closed', () => { this.puzzleWindow = null; });
+        this.titlePartsWindow.on('closed', () => { this.titlePartsWindow = null; });
     }
 
-    closePuzzleWindow() {
-        if (this.puzzleWindow) {
-            this.puzzleWindow.close();
+    closeTitlePartsWindow() {
+        if (this.titlePartsWindow) {
+            this.titlePartsWindow.close();
         }
     }
 
@@ -162,6 +164,8 @@ class WindowManager {
 
         const contextMenu = Menu.buildFromTemplate([
             { label: this.isLocked ? i18n.t('tray.unlock') : i18n.t('tray.lock'), click: () => this.toggleLock() },
+            { label: this.isWidgetHidden ? i18n.t('tray.show') : i18n.t('tray.hide'), click: () => this.toggleWidgetVisibility() },
+            { label: i18n.t('tray.fix_title'), click: () => this.toggleTitlePartsWindow({ title: mediaMonitor.lastTrackTitle, artist: mediaMonitor.lastTrackArtist }) },
             { label: i18n.t('tray.settings'), click: () => this.openSettingsWindow() },
             { label: i18n.t('tray.help'), click: () => app.emit('open-help-request') },
             { type: 'separator' },

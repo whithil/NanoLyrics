@@ -9,7 +9,7 @@
         "hk_lock": "Trancar",
         "hk_sync": "Sinc",
         "hk_vis": "Visibilidade",
-        "hk_puz": "Puzzle"
+        "hk_puz": "Partes do Título"
     },
     "settings": {
         "title": "Definições do Widget",
@@ -26,6 +26,7 @@
         "tab_hotkeys": "Atalhos",
         "tab_plugins": "Plugins",
         "tab_advanced": "Avançado",
+        "tab_about": "Sobre",
         "visual_designer": "Designer Visual & Estilo",
         "font_search": "Pesquisar ou digitar nome da fonte...",
         "shadow_none": "Sem Sombra",
@@ -40,11 +41,11 @@
         "advance_sync": "Avançar Sincronização",
         "rewind_sync": "Atrasar Sincronização",
         "show_hide": "Mostrar/Esconder Widget",
-        "open_puzzle": "🧩 Abrir Seletor de Partes do título",
+        "open_title_parts": "🧩 Abrir Seletor de Partes do Título",
         "hotkey_hint": "Use modificadores: {modifier}, Shift, Alt. Ex: \"{modifier}+Shift+P\".",
         "cache_mgmt": "Gestão de Cache e Ficheiros Locais",
         "synced_lyrics": "Letras Sincronizadas (.lrc)",
-        "puzzle_overrides": "Overrides do Puzzle & Sincronização (.json)",
+        "title_parts_overrides": "Partes do Título & Sincronização (.json)",
         "calculating": "A calcular...",
         "clear_cache": "Limpar Cache",
         "clear_lrc": "Limpar Cache .lrc",
@@ -65,11 +66,15 @@
         "bg_image": "Imagem de Fundo (URL ou path)",
         "border_image": "CSS Border Image (Slice)",
         "advanced": "Definições Avançadas",
+        "language": "Idioma da App",
+        "language_auto": "Auto-detetar (Sistema)",
         "support_lrclib": "Apoiar o LRCLIB (Provedor da API)",
         "support_message": "O NanoLyrics utiliza a API gratuita do LRCLIB. Somos um esforço humilde para fazer bom uso do seu serviço. Por favor, considere apoiar e doar ao site oficial do LRCLIB.",
         "visit_lrclib": "Visitar Website do LRCLIB",
         "plugins_title": "Gestão de Plugins",
         "plugins_hint": "Gerir e configurar extensões da aplicação. Plugins ativos carregam no arranque.",
+        "plugins_how_it_works_title": "Como o NanoLyrics Deteta Música",
+        "plugins_how_it_works_desc": "O NanoLyrics utiliza funcionalidades nativas do Sistema Operativo (SMTC no Windows, MPRIS no Linux, AppleScript no macOS) para garantir uma integração perfeita com a maioria das apps multimédia. No entanto, algumas apps não seguem estes padrões; é aí que os plugins entram—preenchendo essa lacuna para que possa desfrutar das letras em qualquer reprodutor.",
         "plugin_enabled": "Ativado",
         "plugin_disabled": "Desativado",
         "plugin_instructions": "Instruções & Utilização",
@@ -80,16 +85,29 @@
         "recording": "A gravar...",
         "space_occupied": "Espaço ocupado: "
     },
-    "puzzle": {
-        "title": "🧩 Partes do Título (Selecione as partes a pesquisar)",
+    "title_parts": {
+        "title": "Seletor de Partes do Título",
+        "intro_title": "Refine a sua Pesquisa",
+        "intro_desc": "Às vezes os títulos incluem tags extras (como [Lyric Video] ou - Remasterizado) que podem interferir na pesquisa.",
+        "how_to_title": "Como funciona",
+        "how_to_desc": "Selecione as partes 🧩 que deseja manter. O NanoLyrics lembrará a sua preferência para esta música específica na próxima vez.",
         "cancel": "Cancelar",
         "search": "Pesquisar Música"
     },
     "tray": {
         "unlock": "🔓 Destrancar Widget",
         "lock": "🔒 Trancar Widget",
+        "show": "Mostrar Letras",
+        "hide": "Esconder Letras",
+        "fix_title": "Corrigir título 🧩 e tentar novamente",
         "settings": "⚙️ Definições",
         "help": "Ajuda",
         "quit": "Sair"
+    },
+    "about": {
+        "title": "Sobre o NanoLyrics",
+        "description": "Um widget de letras leve e personalizável para o seu desktop.",
+        "disclaimer": "Independente & Não Afiliado: Este projeto foi criado por diversão e não é patrocinado nem afiliado ao LRCLIB. Simplesmente adoramos o serviço deles!",
+        "github": "Código Fonte & Documentação"
     }
 }

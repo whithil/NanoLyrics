@@ -187,7 +187,15 @@ function renderFontOptions(fonts) {
         fontDropdown.appendChild(opt);
     });
 }
-document.addEventListener('click', (e) => { if (!e.target.closest('.font-picker-container')) fontDropdown.classList.add('hidden'); });
+document.addEventListener('click', (e) => {
+    if (!e.target.closest('.font-picker-container')) fontDropdown.classList.add('hidden');
+    
+    const link = e.target.closest('a');
+    if (link && link.href && link.href.startsWith('http')) {
+        e.preventDefault();
+        ipcRenderer.send('open-external', link.href);
+    }
+});
 ipcRenderer.on('apply-system-fonts', (e, fonts) => { systemFonts = fonts; renderFontOptions(fonts.slice(0, 50)); });
 
 // Tabs Logic
@@ -226,6 +234,7 @@ function applyTranslations(data) {
     document.getElementById('tab-hotkeys-label').innerText = t('settings.tab_hotkeys');
     document.getElementById('tab-plugins-label').innerText = t('settings.tab_plugins');
     document.getElementById('tab-advanced-label').innerText = t('settings.tab_advanced');
+    document.getElementById('tab-about-label').innerText = t('settings.tab_about');
     document.getElementById('visual-designer-title').innerText = t('settings.visual_designer');
     document.getElementById('fontFamily').placeholder = t('settings.font_search');
     document.getElementById('active-color-label').innerText = t('settings.active');
@@ -240,16 +249,23 @@ function applyTranslations(data) {
     document.getElementById('hk-adv-label').innerText = t('settings.advance_sync');
     document.getElementById('hk-rew-label').innerText = t('settings.rewind_sync');
     document.getElementById('hk-vis-label').innerText = t('settings.show_hide');
-    document.getElementById('hk-puz-label').innerText = t('settings.open_puzzle');
+    document.getElementById('hk-puz-label').innerText = t('settings.open_title_parts');
     document.getElementById('hotkey-hint').innerText = t('settings.hotkey_hint', { modifier: mod });
     document.getElementById('plugins-title').innerText = t('settings.plugins_title');
     document.getElementById('plugins-hint').innerText = t('settings.plugins_hint');
+    document.getElementById('plugins-how-it-works-title').innerText = t('settings.plugins_how_it_works_title');
+    document.getElementById('plugins-how-it-works-desc').innerText = t('settings.plugins_how_it_works_desc');
+    document.getElementById('language-title').innerText = t('settings.language');
+    document.getElementById('language-auto').innerText = t('settings.language_auto');
     document.getElementById('cache-mgmt-title').innerText = t('settings.cache_mgmt');
     document.getElementById('lrc-cache-label').innerText = t('settings.synced_lyrics');
-    document.getElementById('overrides-cache-label').innerText = t('settings.puzzle_overrides');
+    document.getElementById('overrides-cache-label').innerText = t('settings.title_parts_overrides');
     document.getElementById('clearLrcBtn').innerText = t('settings.clear_lrc');
     document.getElementById('clearOverridesBtn').innerText = t('settings.clear_overrides');
     document.getElementById('cache-hint').innerText = t('settings.cache_hint');
+    document.getElementById('about-title').innerText = t('about.title');
+    document.getElementById('about-description').innerText = t('about.description');
+    document.getElementById('about-disclaimer').innerText = t('about.disclaimer');
     document.getElementById('support-lrclib-title').innerText = t('settings.support_lrclib');
     document.getElementById('support-message').innerText = t('settings.support_message');
     document.getElementById('btn-visit-lrclib').innerText = t('settings.visit_lrclib');
@@ -263,7 +279,7 @@ function renderHotkeys() {
     document.getElementById('hk_adv').value = formatHotkey(appConfig.hotkeys.advanceSync);
     document.getElementById('hk_rew').value = formatHotkey(appConfig.hotkeys.rewindSync);
     document.getElementById('hk_vis').value = formatHotkey(appConfig.hotkeys.toggleWidget);
-    document.getElementById('hk_puz').value = formatHotkey(appConfig.hotkeys.togglePuzzle);
+    document.getElementById('hk_puz').value = formatHotkey(appConfig.hotkeys.toggleTitleParts);
 }
 
 function renderPluginList(plugins) {
@@ -309,6 +325,7 @@ function handleClear(type, btnId) {
 document.getElementById('clearLrcBtn').onclick = () => handleClear('lrc', 'clearLrcBtn');
 document.getElementById('clearOverridesBtn').onclick = () => handleClear('overrides', 'clearOverridesBtn');
 document.getElementById('btn-visit-lrclib').onclick = () => ipcRenderer.send('open-external', 'https://lrclib.net');
+document.getElementById('btn-visit-github').onclick = () => ipcRenderer.send('open-external', 'https://github.com/whithil/NanoLyrics');
 
 document.getElementById('btn-browse-bg').onclick = () => ipcRenderer.send('open-file-dialog');
 ipcRenderer.on('selected-file', (e, path) => {
@@ -337,7 +354,7 @@ document.getElementById('saveBtn').onclick = () => {
             advanceSync: revertHotkey(document.getElementById('hk_adv').value),
             rewindSync: revertHotkey(document.getElementById('hk_rew').value),
             toggleWidget: revertHotkey(document.getElementById('hk_vis').value),
-            togglePuzzle: revertHotkey(document.getElementById('hk_puz').value)
+            toggleTitleParts: revertHotkey(document.getElementById('hk_puz').value)
         },
         outlineColor: document.getElementById('outlineColor').value,
         outlineSize: parseFloat(document.getElementById('outlineSize').value),

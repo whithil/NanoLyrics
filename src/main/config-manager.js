@@ -8,7 +8,7 @@ const DEFAULT_HOTKEYS = {
     advanceSync: 'CommandOrControl+Shift+Right',
     rewindSync: 'CommandOrControl+Shift+Left',
     toggleWidget: 'CommandOrControl+Shift+H',
-    togglePuzzle: 'CommandOrControl+Shift+P'
+    toggleTitleParts: 'CommandOrControl+Shift+P'
 };
 
 class ConfigManager {
@@ -19,9 +19,9 @@ class ConfigManager {
             hotkeys: DEFAULT_HOTKEYS,
             fontFamily: 'Outfit',
             fontWeight: 700,
-            fontSize: 26,
+            fontSize: 25,
             letterSpacing: 0,
-            activeColor: '#39FF14',
+            activeColor: '#14ff30',
             inactiveColor: '#FFFFFF',
             cachePath: path.join(app.getPath('userData'), 'LrcCache'),
             showTimestamps: false,
@@ -30,20 +30,21 @@ class ConfigManager {
             x: null,
             y: null,
             // Text Appearance
-            outlineColor: '#000000',
-            outlineSize: 0,
-            shadowColor: 'rgba(0,0,0,0.9)',
-            shadowBlur: 4,
+            outlineColor: '#050505',
+            outlineSize: 2,
+            shadowColor: '#7411ee',
+            shadowBlur: 15,
             shadowOffsetX: 0,
-            shadowOffsetY: 2,
+            shadowOffsetY: 0,
             // Widget Styling
             boxedMode: false,
             boxColor: '#000000',
-            boxOpacity: 0.5,
+            boxOpacity: 1.0,
             widgetOpacity: 1.0,
             backgroundImage: '',
             borderImage: '',
-            disabledPlugins: []
+            disabledPlugins: [],
+            language: null // null means auto-detect
         };
         this.loadConfig();
     }
@@ -92,7 +93,7 @@ class ConfigManager {
     }
 
     getOverridesPath() {
-        return path.join(this.appConfig.cachePath, 'overrides');
+        return path.join(this.appConfig.cachePath, 'title_parts_overrides');
     }
 
     getTrackMeta(artist, title) {

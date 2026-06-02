@@ -8,8 +8,9 @@ const { exec } = require('child_process');
 
 class OsuLazerPlugin {
     constructor() {
-        this.name = 'osu!lazer Support';
-        this.description = 'Enhances metadata and cleans up difficulty tags for better lyrics matching in osu!lazer.';
+        this.name = 'osu! (Stable/Lazer) Support';
+        this.description = 'High-precision metadata for osu! (Stable/Lazer). Supports menu music tracking via TOSU.';
+        this.instructions = 'To track menu music and gameplay accurately without needing to enter a match, download and run <b>TOSU</b> from <a href="https://github.com/tosuapp/tosu">GitHub</a>. NanoLyrics will automatically connect to TOSU\'s local API.';
     }
 
     onLoad(updateApp) {
@@ -18,7 +19,7 @@ class OsuLazerPlugin {
         this.isOsuActive = false;
         this.pollIntervalId = null;
 
-        console.log('[osu!lazer] Plugin loaded.');
+        console.log('[osu! Support] Plugin loaded.');
         
         this.startPolling(2000); // Start with default 2-second polling
     }
@@ -28,7 +29,7 @@ class OsuLazerPlugin {
             clearInterval(this.pollIntervalId);
         }
         this.pollIntervalId = setInterval(() => this.pollOsuData(), interval);
-        console.log(`[osu!lazer] Polling started with ${interval}ms interval.`);
+        console.log(`[osu! Support] Polling started with ${interval}ms interval.`);
     }
 
     pollOsuData() {

@@ -181,6 +181,11 @@ h3 {
     font-size: 12px;
 }
 
+select option {
+    background: #1a1a24;
+    color: #fff;
+}
+
 .tool-group input[type="number"] { width: 40px; text-align: center; }
 
 .designer-input {
@@ -224,6 +229,8 @@ label { display: block; font-size: 10px; text-transform: uppercase; color: #aaa;
 .plugin-name { font-weight: bold; font-size: 14px; color: #39FF14; }
 .plugin-desc { font-size: 11px; color: #aaa; margin-bottom: 8px; line-height: 1.4; }
 .plugin-instr { font-size: 10px; color: #888; background: rgba(255,255,255,0.03); padding: 8px; border-radius: 4px; white-space: pre-wrap; border-left: 2px solid #39FF14; }
+.plugin-instr a { color: #39FF14; text-decoration: none; font-weight: bold; }
+.plugin-instr a:hover { text-decoration: underline; }
 
 /* Switch */
 .switch { position: relative; display: inline-block; width: 36px; height: 20px; }

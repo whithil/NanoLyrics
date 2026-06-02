@@ -9,7 +9,7 @@
         "hk_lock": "Lock",
         "hk_sync": "Sync",
         "hk_vis": "Visibility",
-        "hk_puz": "Puzzle"
+        "hk_puz": "Title Parts"
     },
     "settings": {
         "title": "Widget Settings",
@@ -26,6 +26,7 @@
         "tab_hotkeys": "Hotkeys",
         "tab_plugins": "Plugins",
         "tab_advanced": "Advanced",
+        "tab_about": "About",
         "visual_designer": "Visual Designer & Styling",
         "font_search": "Search or type font name...",
         "shadow_none": "No Shadow",
@@ -40,11 +41,11 @@
         "advance_sync": "Advance Synchronization",
         "rewind_sync": "Rewind Synchronization",
         "show_hide": "Show/Hide Widget",
-        "open_puzzle": "Open Title Puzzle Selector",
+        "open_title_parts": "🧩 Open Title Parts Selector",
         "hotkey_hint": "Use modifiers: {modifier}, Shift, Alt. E.g. \"{modifier}+Shift+P\".",
         "cache_mgmt": "Cache & Local File Management",
         "synced_lyrics": "Synced Lyrics (.lrc)",
-        "puzzle_overrides": "Puzzle & Sync Overrides (.json)",
+        "title_parts_overrides": "Title Parts & Sync Overrides (.json)",
         "calculating": "Calculating...",
         "clear_cache": "Clear Cache",
         "clear_lrc": "Clear .lrc Cache",
@@ -65,11 +66,15 @@
         "bg_image": "Background Image (URL or path)",
         "border_image": "CSS Border Image (Slice)",
         "advanced": "Advanced Settings",
+        "language": "App Language",
+        "language_auto": "Auto-detect (System)",
         "support_lrclib": "Support LRCLIB (API Provider)",
         "support_message": "NanoLyrics uses the freely available LRCLIB API. We are a humble effort to make good use of their service. Please consider supporting and donating to the official LRCLIB website.",
         "visit_lrclib": "Visit LRCLIB Website",
         "plugins_title": "Plugin Management",
         "plugins_hint": "Manage and configure application extensions. Enabled plugins load on startup.",
+        "plugins_how_it_works_title": "How NanoLyrics Tracks Music",
+        "plugins_how_it_works_desc": "NanoLyrics uses native Operating System features (SMTC on Windows, MPRIS on Linux, AppleScript on macOS) to ensure seamless integration with most multimedia apps. However, some apps don't follow these standards; that's where plugins come in—bridging the gap so you can enjoy lyrics in any player.",
         "plugin_enabled": "Enabled",
         "plugin_disabled": "Disabled",
         "plugin_instructions": "Instructions & Usage",
@@ -80,16 +85,29 @@
         "recording": "Recording...",
         "space_occupied": "Space occupied: "
     },
-    "puzzle": {
-        "title": "Title Parts (Select parts to search)",
+    "title_parts": {
+        "title": "Title Parts Selector",
+        "intro_title": "Refine Your Search",
+        "intro_desc": "Sometimes titles include extra tags (like [Lyric Video] or - Remastered) that can interfere with the search.",
+        "how_to_title": "How it works",
+        "how_to_desc": "Select the parts 🧩 you want to keep. NanoLyrics will remember your preference for this specific song next time.",
         "cancel": "Cancel",
         "search": "Search Music"
     },
     "tray": {
         "unlock": "Unlock Widget",
         "lock": "Lock Widget",
+        "show": "Show Lyrics",
+        "hide": "Hide Lyrics",
+        "fix_title": "Fix title 🧩 and retry",
         "settings": "Settings",
         "help": "Help",
         "quit": "Quit"
+    },
+    "about": {
+        "title": "About NanoLyrics",
+        "description": "A lightweight, customizable lyrics widget for your desktop.",
+        "disclaimer": "Independent & Non-Affiliated: This project is created for fun and is not sponsored by or affiliated with LRCLIB. We simply love their service!",
+        "github": "Source Code & Documentation"
     }
 }

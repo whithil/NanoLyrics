@@ -6,23 +6,24 @@ This document details the software architecture, behavior patterns, API integrat
 
 ## 1. Architectural Overview
 
-NanoLyrics is structured as a **single-file Electron application** for maximum portability, ease of compilation, and low resource footprint. The core application logic resides in `app.js`, which dynamically compiles, configures, and serves the user interface.
+NanoLyrics is structured as a **modular Electron application** designed for portability and low resource footprint. The application logic is divided into a main process that manages system integration and a renderer process for the user interface.
 
 ```mermaid
 graph TD
-    A[Electron Main Process: app.js] -->|Creates| B[Transparent Frameless BrowserWindow]
+    A[Electron Main Process] -->|Creates| B[Transparent Frameless BrowserWindow]
     A -->|Global Hotkey / Tray Click| C[Toggle Ignore Mouse Events]
     B -->|IPC Events| A
     A -->|IPC Track Updates| B
-    A -->|Shell Pollers| D[Active Media Players]
+    A -->|Monitors / Workers| D[Active Media Players]
     D -->|Track & Timeline Data| A
     A -->|Local File Cache| E[AppData/LrcCache]
     A -->|LRCLIB API| F[Net lyric provider]
+    A -->|Plugin Manager| G[External Plugins]
 ```
 
 ---
 
-## 2. Window Transparency & Click-Through Protocol
+## 2. Window Management & Interactivity
 
 To ensure a seamless aesthetic that does not obstruct background windows, NanoLyrics operates under two distinct window modes:
 
@@ -45,53 +46,21 @@ To ensure a seamless aesthetic that does not obstruct background windows, NanoLy
 
 ---
 
-## 3. Zero-Dependency Media Monitoring System
+## 3. Media Monitoring & Plugin System
 
-To bypass complex, platform-dependent native C++ libraries (which commonly break during Node upgrades and cross-platform compilation), NanoLyrics implements lightweight background system-level subprocess calls to check active media players.
+To ensure broad compatibility, NanoLyrics employs a multi-layered monitoring strategy:
 
-### Subprocess Strategies by OS:
+### A. Native OS Monitoring
+1. **Windows (10/11)**: Uses a dedicated `smtc-worker.js` thread to query the **System Media Transport Controls (SMTC)** via NodeRT/PowerShell fallbacks.
+2. **macOS**: Uses AppleScript to interface with Spotify and Apple Music.
+3. **Linux**: Uses the MPRIS protocol (via `playerctl` or `dbus-send`).
 
-#### 1. Windows (10/11)
-Queries the **Windows Runtime System Media Transport Controls (SMTC)** using standard PowerShell (no administrator privileges needed):
-```powershell
-[Windows.Media.Control.GlobalSystemMediaTransportControlsSessionManager, Windows.Media.Control, ContentType=WindowsRuntime] | Out-Null
-$mgr = [Windows.Media.Control.GlobalSystemMediaTransportControlsSessionManager]::RequestAsync().GetAwaiter().GetResult()
-$session = $mgr.GetCurrentSession()
-if ($session) {
-    $info = $session.TryGetMediaPropertiesAsync().GetAwaiter().GetResult()
-    $timeline = $session.GetTimelineProperties()
-    [PSCustomObject]@{
-        Title = $info.Title
-        Artist = $info.Artist
-        Position = $timeline.Position.TotalSeconds
-        Status = $session.GetPlaybackInfo().PlaybackStatus.ToString()
-    } | ConvertTo-Json -Compress
-}
-```
+### B. Plugin System
+When native OS monitoring is insufficient (e.g., for apps that don't publish SMTC/MPRIS data), NanoLyrics uses a modular plugin system:
+- **VLC Web Support**: Polls VLC's built-in Lua HTTP interface.
+- **osu! Support**: Connects to **TOSU** (memory reader) for high-precision metadata including menu music.
 
-#### 2. macOS
-Executes a quick **AppleScript** command to interface with running audio applications (Spotify & Apple Music):
-```applescript
-tell application "System Events"
-    if exists (process "Spotify") then
-        tell application "Spotify"
-            return "{\"Artist\":\"" & artist of current track & "\",\"Title\":\"" & name of current track & "\",\"Position\":" & player position & ",\"Status\":\"" & player state & "\"}"
-        end tell
-    else if exists (process "Music") then
-        tell application "Music"
-            return "{\"Artist\":\"" & artist of current track & "\",\"Title\":\"" & name of current track & "\",\"Position\":" & player position & ",\"Status\":\"" & player state & "\"}"
-        end tell
-    end if
-end tell
-```
-
-#### 3. Linux
-Queries media streams via `dbus-send` targeting the MPRIS protocol:
-```bash
-dbus-send --print-reply --dest=org.mpris.MediaPlayer2.spotify /org/mpris/MediaPlayer2 org.freedesktop.DBus.Properties.Get string:'org.mpris.MediaPlayer2.Player' string:'PlaybackStatus'
-```
-
-### Timeline Drift Correction & Simulation Fallback
+### Timeline Drift Correction
 If the underlying media player fails to provide timeline progress updates, or if the update rate is slow:
 1. On **Track Transition Detection** (e.g. metadata title or artist changes), the internal millisecond timeline resets to `0.0`.
 2. A high-accuracy local timer ticks up continuously:

@@ -17,6 +17,7 @@
         <button class="tab-btn" data-tab="hotkeys" id="tab-hotkeys-label">Hotkeys</button>
         <button class="tab-btn" data-tab="plugins" id="tab-plugins-label">Plugins</button>
         <button class="tab-btn" data-tab="advanced" id="tab-advanced-label">Advanced</button>
+        <button class="tab-btn" data-tab="about" id="tab-about-label">About</button>
     </div>
 
     <div class="tabs-container">
@@ -124,7 +125,7 @@
                         <input type="text" id="hk_vis" class="hotkey-input" readonly>
                     </div>
                     <div style="grid-column: span 2;">
-                        <label id="hk-puz-label">🧩 Open Title Puzzle Selector</label>
+                        <label id="hk-puz-label">🧩 Open Title Parts Selector</label>
                         <input type="text" id="hk_puz" class="hotkey-input" readonly>
                     </div>
                 </div>
@@ -134,6 +135,10 @@
 
         <!-- Tab: Plugins -->
         <div class="tab-pane" id="pane-plugins">
+            <div class="section">
+                <h3 id="plugins-how-it-works-title">How NanoLyrics Tracks Music</h3>
+                <p id="plugins-how-it-works-desc" style="font-size: 11px; color: #ccc; margin-bottom: 5px; line-height: 1.5;"></p>
+            </div>
             <div class="section">
                 <h3 id="plugins-title">Plugin Management</h3>
                 <p id="plugins-hint" style="font-size: 11px; color: #888; margin-bottom: 15px;">Manage and configure application extensions. Enabled plugins load on startup.</p>
@@ -146,6 +151,18 @@
         <!-- Tab: Advanced -->
         <div class="tab-pane" id="pane-advanced">
             <div class="section">
+                <h3 id="language-title">App Language</h3>
+                <div class="tool-group" style="width: 100%; box-sizing: border-box; margin-bottom: 10px;">
+                    <span class="tool-icon">🌐</span>
+                    <select id="appLanguage" style="flex-grow: 1;">
+                        <option value="" id="language-auto">Auto-detect (System)</option>
+                        <option value="en-US">English (US)</option>
+                        <option value="pt-BR">Português (Brasil)</option>
+                        <option value="fr-FR">Français</option>
+                    </select>
+                </div>
+            </div>
+            <div class="section">
                 <h3 id="cache-mgmt-title">Cache & Local File Management</h3>
                 <div class="cache-row">
                     <div>
@@ -156,12 +173,22 @@
                 </div>
                 <div class="cache-row">
                     <div>
-                        <div id="overrides-cache-label" style="font-weight: bold; font-size: 13px;">Puzzle & Sync Overrides (.json)</div>
+                        <div id="overrides-cache-label" style="font-weight: bold; font-size: 13px;">Title Parts & Sync Overrides (.json)</div>
                         <div style="font-size: 11px; color: #888;" id="overridesSizeLabel">Calculating...</div>
                     </div>
                     <button class="btn-danger" id="clearOverridesBtn">Clear Overrides</button>
                 </div>
                 <p id="cache-hint" style="font-size:11px; color:#888; margin-top: 8px;">Files are stored natively as text in the user data directory. No heavy database is required.</p>
+            </div>
+        </div>
+
+        <!-- Tab: About -->
+        <div class="tab-pane" id="pane-about">
+            <div class="section">
+                <h3 id="about-title">About NanoLyrics</h3>
+                <p id="about-description" style="font-size: 13px; line-height: 1.5; color: #fff; margin-bottom: 8px;">A lightweight, customizable lyrics widget for your desktop.</p>
+                <p id="about-disclaimer" style="font-size: 11px; line-height: 1.4; color: #888; margin-bottom: 15px; font-style: italic;"></p>
+                <button id="btn-visit-github" style="width: 100%; background: #24292e; color: #fff; margin-bottom: 10px;">Source Code & Documentation</button>
             </div>
 
             <div class="section">

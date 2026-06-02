@@ -1,6 +1,7 @@
 const { app } = require('electron');
 const path = require('path');
 const fs = require('fs');
+const configManager = require('./config-manager');
 
 class I18nManager {
     constructor() {
@@ -11,14 +12,22 @@ class I18nManager {
     }
 
     init() {
-        // Detect system locale
-        const systemLocale = app.getLocale();
-        console.log(`[i18n] System locale detected: ${systemLocale}`);
+        const config = configManager.getConfig();
+        const savedLocale = config.language;
 
-        // Map system locale to supported locales
-        if (systemLocale.startsWith('pt')) this.currentLocale = 'pt-BR';
-        else if (systemLocale.startsWith('fr')) this.currentLocale = 'fr-FR';
-        else this.currentLocale = 'en-US';
+        if (savedLocale) {
+            this.currentLocale = savedLocale;
+            console.log(`[i18n] Using configured locale: ${this.currentLocale}`);
+        } else {
+            // Detect system locale
+            const systemLocale = app.getLocale();
+            console.log(`[i18n] System locale detected: ${systemLocale}`);
+
+            // Map system locale to supported locales
+            if (systemLocale.startsWith('pt')) this.currentLocale = 'pt-BR';
+            else if (systemLocale.startsWith('fr')) this.currentLocale = 'fr-FR';
+            else this.currentLocale = 'en-US';
+        }
 
         this.loadTranslations(this.currentLocale);
         this.addPlatformStrings();

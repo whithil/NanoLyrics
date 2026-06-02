@@ -108,7 +108,7 @@ function registerHotkeys() {
     bind(hotkeys.advanceSync, () => adjustSync(0.5), 'Advance Sync');
     bind(hotkeys.rewindSync, () => adjustSync(-0.5), 'Rewind Sync');
     bind(hotkeys.toggleWidget, () => windowManager.toggleWidgetVisibility(), 'Toggle Widget');
-    bind(hotkeys.togglePuzzle, () => windowManager.togglePuzzleWindow({ title: mediaMonitor.lastTrackTitle, artist: mediaMonitor.lastTrackArtist }), 'Toggle Puzzle');
+    bind(hotkeys.toggleTitleParts, () => windowManager.toggleTitlePartsWindow({ title: mediaMonitor.lastTrackTitle, artist: mediaMonitor.lastTrackArtist }), 'Toggle Title Parts');
 }
 
 function adjustSync(delta) {
@@ -125,7 +125,7 @@ function adjustSync(delta) {
 
 ipcMain.on('toggle-lock-request', () => windowManager.toggleLock());
 ipcMain.on('open-settings', () => windowManager.openSettingsWindow());
-ipcMain.on('close-puzzle', () => windowManager.closePuzzleWindow());
+ipcMain.on('close-title-parts', () => windowManager.closeTitlePartsWindow());
 ipcMain.on('open-external', (event, url) => shell.openExternal(url));
 ipcMain.on('open-help', () => shell.openExternal('https://github.com/whithil/NanoLyrics#readme'));
 
@@ -152,7 +152,7 @@ ipcMain.on('request-settings-config', (event) => {
     event.reply('apply-translations', i18n.getTranslations());
 });
 
-ipcMain.on('request-puzzle-translations', (event) => {
+ipcMain.on('request-title-parts-translations', (event) => {
     event.reply('apply-translations', i18n.getTranslations());
 });
 
@@ -211,14 +211,17 @@ ipcMain.on('clear-cache', (event, type) => {
 
 ipcMain.on('save-settings', (event, settings) => {
     configManager.setConfig(settings);
+    i18n.init(); // Reload language from config
     registerHotkeys();
     if (pluginManager) pluginManager.init();
     windowManager.sendToWidget('apply-config', configManager.getConfig());
+    windowManager.sendToWidget('apply-translations', i18n.getTranslations());
+    windowManager.buildTray(); // Update tray labels if language changed
     if (windowManager.settingsWindow) windowManager.settingsWindow.close();
 });
 
-ipcMain.on('puzzle-search', async (event, customQuery) => {
-    windowManager.closePuzzleWindow();
+ipcMain.on('title-parts-search', async (event, customQuery) => {
+    windowManager.closeTitlePartsWindow();
     const title = mediaMonitor.lastTrackTitle;
     const artist = mediaMonitor.lastTrackArtist;
     if (!title) return;

@@ -9,7 +9,7 @@
         "hk_lock": "Verrouiller",
         "hk_sync": "Sync",
         "hk_vis": "Visibilité",
-        "hk_puz": "Puzzle"
+        "hk_puz": "Parties du Titre"
     },
     "settings": {
         "title": "Paramètres du Widget",
@@ -26,6 +26,7 @@
         "tab_hotkeys": "Raccourcis",
         "tab_plugins": "Extensions",
         "tab_advanced": "Avancé",
+        "tab_about": "À propos",
         "visual_designer": "Designer Visuel & Style",
         "font_search": "Rechercher ou taper le nom de la police...",
         "shadow_none": "Pas d'ombre",
@@ -40,11 +41,11 @@
         "advance_sync": "Avancer la synchronisation",
         "rewind_sync": "Reculer la synchronisation",
         "show_hide": "Afficher/Masquer le Widget",
-        "open_puzzle": "Ouvrir le sélecteur de parties du titre",
+        "open_title_parts": "🧩 Ouvrir le Séletceur de Parties du Titre",
         "hotkey_hint": "Utilisez les modificateurs : {modifier}, Shift, Alt. Ex: \"{modifier}+Shift+P\".",
         "cache_mgmt": "Gestion du cache et des fichiers locaux",
         "synced_lyrics": "Paroles synchronisées (.lrc)",
-        "puzzle_overrides": "Remplacements de puzzle et synchronisation (.json)",
+        "title_parts_overrides": "Parties du Titre & Synchronisation (.json)",
         "calculating": "Calcul en cours...",
         "clear_cache": "Effacer le cache",
         "clear_lrc": "Effacer le cache .lrc",
@@ -65,6 +66,8 @@
         "bg_image": "Image d'arrière-plan (URL ou chemin)",
         "border_image": "CSS Border Image (Slice)",
         "advanced": "Paramètres Avancés",
+        "language": "Langue de l'application",
+        "language_auto": "Auto-détection (Système)",
         "support_lrclib": "Soutenir LRCLIB (Fournisseur d'API)",
         "support_message": "NanoLyrics utilise l'API LRCLIB disponible gratuitement. Nous sommes un humble effort pour faire bon usage de leur service. Veuillez envisager de soutenir et de faire un don sur le site officiel de LRCLIB.",
         "visit_lrclib": "Visiter le site Web de LRCLIB",
@@ -80,16 +83,29 @@
         "recording": "Enregistrement...",
         "space_occupied": "Espace occupé : "
     },
-    "puzzle": {
-        "title": "Parties du titre (Sélectionnez les parties à rechercher)",
+    "title_parts": {
+        "title": "Sélecteur de Parties du Titre",
+        "intro_title": "Affinez votre recherche",
+        "intro_desc": "Parfois, les titres incluent des tags supplémentaires (comme [Lyric Video] ou - Remastered) qui peuvent interférer avec la recherche.",
+        "how_to_title": "Comment ça marche",
+        "how_to_desc": "Sélectionnez les parties 🧩 que vous souhaitez conserver. NanoLyrics se souviendra de votre préférence pour cette chanson spécifique la prochaine fois.",
         "cancel": "Annuler",
         "search": "Rechercher la musique"
     },
     "tray": {
         "unlock": "Déverrouiller le Widget",
         "lock": "Verrouiller le Widget",
+        "show": "Afficher les Paroles",
+        "hide": "Masquer les Paroles",
+        "fix_title": "Corriger le titre 🧩 et réessayer",
         "settings": "Paramètres",
         "help": "Aide",
         "quit": "Quitter"
+    },
+    "about": {
+        "title": "À propos de NanoLyrics",
+        "description": "Un widget de paroles léger et personnalisable pour votre bureau.",
+        "disclaimer": "Indépendant & Non Affilié : Ce projet est créé pour le plaisir et n'est pas sponsorisé par ou affilié à LRCLIB. Nous aimons simplement leur service !",
+        "github": "Code Source & Documentation"
     }
 }
