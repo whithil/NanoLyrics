@@ -1,0 +1,203 @@
+:root {
+    --active-color: #39FF14;
+    --inactive-color: #FFFFFF;
+    --font-size: 26px;
+    --font-family: 'Outfit', sans-serif;
+    --font-weight: 700;
+    --letter-spacing: 0px;
+    
+    /* New Customization Variables */
+    --outline-color: #000000;
+    --outline-size: 0px;
+    --shadow-color: rgba(0,0,0,0.9);
+    --shadow-blur: 4px;
+    --shadow-offset-x: 0px;
+    --shadow-offset-y: 2px;
+    
+    --box-color: #000000;
+    --box-opacity: 0.5;
+    --widget-opacity: 1.0;
+    --bg-image: none;
+    --border-image: none;
+}
+
+body {
+    margin: 0;
+    overflow: hidden;
+    font-family: var(--font-family);
+    background: transparent;
+    user-select: none;
+    height: 100vh;
+    width: 100vw;
+    opacity: var(--widget-opacity);
+    background-image: var(--bg-image);
+    background-size: cover;
+    background-repeat: no-drag;
+    border-image: var(--border-image);
+}
+
+#lyrics-viewport {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+    pointer-events: none;
+}
+
+#lyrics-container {
+    position: absolute;
+    width: 100%;
+    top: 50%;
+    left: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    will-change: transform;
+}
+
+.lyric-line {
+    font-size: var(--font-size);
+    font-weight: 400;
+    color: var(--inactive-color);
+    padding: 8px 20px;
+    margin: 0;
+    opacity: 0.55;
+    transition: all 0.3s ease;
+    min-height: 38px;
+    line-height: 1.5;
+    filter: blur(0.5px);
+    letter-spacing: var(--letter-spacing);
+    
+    /* Shadow & Outline */
+    text-shadow: 
+        calc(var(--outline-size) * -1) calc(var(--outline-size) * -1) 0 var(--outline-color),
+        var(--outline-size) calc(var(--outline-size) * -1) 0 var(--outline-color),
+        calc(var(--outline-size) * -1) var(--outline-size) 0 var(--outline-color),
+        var(--outline-size) var(--outline-size) 0 var(--outline-color),
+        var(--shadow-offset-x) var(--shadow-offset-y) var(--shadow-blur) var(--shadow-color);
+    
+    display: inline-block; /* Essential for boxed mode */
+    width: auto;
+}
+
+.boxed-mode .lyric-line {
+    background: var(--box-color);
+    border-radius: 4px;
+    padding: 4px 12px;
+    margin: 4px 0;
+    box-decoration-break: clone;
+    -webkit-box-decoration-break: clone;
+}
+
+.lyric-line.active {
+    font-size: calc(var(--font-size) * 1.25);
+    font-weight: var(--font-weight);
+    color: var(--active-color);
+    opacity: 1;
+    filter: none;
+    transform: scale(1.04);
+}
+
+.boxed-mode .lyric-line.active {
+    background: rgba(0, 0, 0, 0.8); /* Slightly darker for active in boxed mode */
+}
+
+.lyric-line.past {
+    opacity: 0.25;
+}
+
+#edit-overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(10, 10, 15, 0.4);
+    backdrop-filter: blur(4px);
+    border: 2px dashed rgba(255, 255, 255, 0.4);
+    border-radius: 8px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    color: white;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+    z-index: 10000;
+    -webkit-app-region: drag;
+}
+
+body.edit-mode #edit-overlay {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.btn {
+    background: rgba(255, 255, 255, 0.15);
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: bold;
+    -webkit-app-region: no-drag;
+    margin: 5px;
+}
+
+.btn:hover {
+    background: rgba(255, 255, 255, 0.25);
+}
+
+.help-btn {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.1);
+    color: white;
+    border: 1px solid rgba(255,255,255,0.3);
+    cursor: pointer;
+    font-size: 14px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    -webkit-app-region: no-drag;
+    transition: all 0.2s;
+}
+
+.help-btn:hover {
+    background: #39FF14;
+    color: black;
+    border-color: white;
+}
+
+#hotkey-helper {
+    position: absolute;
+    bottom: 10px;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    font-family: inherit;
+}
+
+.hk-chip {
+    background: rgba(255,255,255,0.08);
+    border: 1px solid rgba(255,255,255,0.15);
+    padding: 3px 8px;
+    border-radius: 4px;
+    font-size: 10px;
+    color: #ccc;
+    display: flex;
+    gap: 5px;
+}
+
+.hk-name {
+    color: #39FF14;
+    font-weight: bold;
+}
+
+.hk-key {
+    color: white;
+    font-weight: bold;
+}

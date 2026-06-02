@@ -1,0 +1,70 @@
+body {
+    margin: 0;
+    display: flex;
+    justify-content: center;
+    align-items: flex-end;
+    height: 100vh;
+    background: transparent;
+    overflow: hidden;
+    font-family: sans-serif;
+}
+
+#title-parts-box {
+    background: rgba(20,20,25,0.95);
+    border: 2px solid #39FF14;
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.8);
+    width: 80%;
+    max-width: 600px;
+    margin-bottom: 40px;
+    text-align: center;
+}
+
+h3 {
+    color: white;
+    margin: 0 0 15px 0;
+    font-size: 16px;
+}
+
+#chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    justify-content: center;
+    margin-bottom: 20px;
+}
+
+.chip {
+    background: #333;
+    color: white;
+    padding: 8px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+    user-select: none;
+    font-weight: bold;
+    transition: all 0.2s;
+    border: 2px solid transparent;
+}
+
+.chip.active {
+    background: #39FF14;
+    color: black;
+    border-color: white;
+    transform: scale(1.05);
+}
+
+button {
+    background: white;
+    color: black;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 6px;
+    font-weight: bold;
+    cursor: pointer;
+    margin: 0 5px;
+}
+
+button.primary {
+    background: #39FF14;
+}

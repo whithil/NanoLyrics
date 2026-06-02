@@ -1,21 +1,24 @@
 /**
  * NanoLyrics SMTC Background Monitor Worker (Windows Only)
+ * Encapsulates Windows System Media Transport Controls monitoring.
  */
 
 const { parentPort } = require('worker_threads');
 
-console.log('[SMTC Worker] Thread iniciada com sucesso.');
-
 try {
     const { SMTCMonitor } = require('@coooookies/windows-smtc-monitor');
-
     const monitor = new SMTCMonitor();
 
+    /**
+     * Maps Windows SMTC playback status codes to human-readable strings.
+     * @param {number} status - SMTC status code
+     * @returns {string} - Status string
+     */
     const parsePlaybackStatus = (status) => {
-        // Windows SMTC: 4 = Playing, 1 = Opened, 2 = Changing
+        // Windows SMTC: 4 = Playing, 1 = Opened, 2 = Changing, 3 = Paused
         switch (status) {
             case 4: return 'Playing';
-            case 1: return 'Opened'; // Media is loaded, but not necessarily playing
+            case 1: return 'Opened'; // Media is loaded but not necessarily playing
             case 2: return 'Changing'; // Media is transitioning
             case 3: return 'Paused';
         }
@@ -26,21 +29,16 @@ try {
     let currentMetadata = { title: '', artist: '', position: 0, duration: 0, status: 'Paused' };
 
     monitor.on('session-media-changed', (appId, mediaProps) => {
-        console.log(`[SMTC Worker] session-media-changed: AppId=${appId}, Title=${mediaProps.title}, Artist=${mediaProps.artist}, ActiveAppId=${activeAppId}`);
-        if (appId === activeAppId) { // If active app's media changes, update it
+        if (appId === activeAppId) {
             updateMetadata(appId, mediaProps);
-        } else {
-            // If a non-active app's media changes AND it's currently playing, switch focus
-            if (isAppPlaying(appId)) { // This will now strictly check for 'Playing'
-                console.log(`[SMTC Worker] Switching focus to new playing app (media changed): ${appId}`);
-                updateMetadata(appId, mediaProps);
-            }
+        } else if (isAppPlaying(appId)) {
+            // Switch focus to the new app if it's currently playing
+            updateMetadata(appId, mediaProps);
         }
     });
 
     monitor.on('session-timeline-changed', (appId, timelineProps) => {
         if (appId === activeAppId) {
-            console.log(`[SMTC Worker] session-timeline-changed: AppId=${appId}, Position=${timelineProps.position}, Duration=${timelineProps.duration}`);
             currentMetadata.position = timelineProps.position || 0;
             currentMetadata.duration = timelineProps.duration || 0;
             sendUpdate();
@@ -48,12 +46,10 @@ try {
     });
 
     monitor.on('session-playback-changed', (appId, playbackInfo) => {
-        console.log(`[SMTC Worker] session-playback-changed: AppId=${appId}, Status=${playbackInfo.playbackStatus} (${parsePlaybackStatus(playbackInfo.playbackStatus)}), ActiveAppId=${activeAppId}`);
         const status = parsePlaybackStatus(playbackInfo.playbackStatus);
         
-        // Prioridade: Se qualquer app começar a tocar, focamos nela
+        // Priority: If any app starts playing, focus on it
         if (status === 'Playing' && appId !== activeAppId) {
-            console.log(`[SMTC Worker] Switching focus to new playing app: ${appId}`);
             syncWithSession(appId);
         } else if (appId === activeAppId) {
             currentMetadata.status = status;
@@ -62,34 +58,16 @@ try {
     });
 
     monitor.on('current-session-changed', (appId) => {
-        console.log(`[SMTC Worker] current-session-changed: AppId=${appId}, ActiveAppId=${activeAppId}`);
         if (appId) {
-            activeAppId = appId;
-            const sessions = SMTCMonitor.getMediaSessions();
-            const currentSession = sessions.find(s => s.sourceAppId === appId);
-            if (currentSession) {
-                currentMetadata.title = currentSession.media?.title || '';
-                currentMetadata.artist = currentSession.media?.artist || '';
-                currentMetadata.position = currentSession.timeline?.position || 0;
-                currentMetadata.duration = currentSession.timeline?.duration || 0;
-                currentMetadata.status = parsePlaybackStatus(currentSession.playback?.playbackStatus);
-                sendUpdate();
-            }
+            syncWithSession(appId);
         }
     });
 
     monitor.on('session-removed', (appId) => {
-        console.log(`[SMTC Worker] session-removed: AppId=${appId}, ActiveAppId=${activeAppId}`);
         if (appId === activeAppId) {
             const sessions = SMTCMonitor.getMediaSessions();
             if (sessions.length > 0) {
-                const nextSession = sessions[0];
-                activeAppId = nextSession.sourceAppId;
-                currentMetadata.title = nextSession.media?.title || '';
-                currentMetadata.artist = nextSession.media?.artist || '';
-                currentMetadata.position = nextSession.timeline?.position || 0;
-                currentMetadata.duration = nextSession.timeline?.duration || 0;
-                currentMetadata.status = parsePlaybackStatus(nextSession.playback?.playbackStatus);
+                syncWithSession(sessions[0].sourceAppId);
             } else {
                 activeAppId = '';
                 currentMetadata = { title: '', artist: '', position: 0, duration: 0, status: 'Paused' };
@@ -133,32 +111,24 @@ try {
         });
     }
 
+    // Initial session sync
     const initialSessions = SMTCMonitor.getMediaSessions();
-    console.log(`[SMTC Worker] Initial sessions found: ${initialSessions.length}`);
     if (initialSessions.length > 0) {
-        const active = initialSessions[0];
-        activeAppId = active.sourceAppId;
-        currentMetadata.title = active.media?.title || '';
-        currentMetadata.artist = active.media?.artist || '';
-        currentMetadata.position = active.timeline?.position || 0;
-        currentMetadata.duration = active.timeline?.duration || 0;
-        currentMetadata.status = parsePlaybackStatus(active.playback?.playbackStatus);
-        sendUpdate();
+        syncWithSession(initialSessions[0].sourceAppId);
     }
 
-    // Polling fallback: Encontra sessões "escondidas" ou presas (essencial para jogos)
+    // Polling fallback: Finds "hidden" or stuck sessions (essential for games)
     setInterval(() => {
         const sessions = SMTCMonitor.getMediaSessions();
         
-        // 1. Prioridade: Se houver ALGO a tocar que não seja a app ativa, muda logo.
+        // 1. Priority: If something else starts playing, switch focus immediately
         const anyPlaying = sessions.find(s => s.playback?.playbackStatus === 4 && s.sourceAppId !== activeAppId);
         if (anyPlaying) {
-            console.log(`[SMTC Worker] Polling detetou nova app a tocar: ${anyPlaying.sourceAppId}`);
             syncWithSession(anyPlaying.sourceAppId);
             return;
         }
 
-        // 2. Fallback: Corrigir estado de pausa na app ativa
+        // 2. Fallback: Correct pause state for the active app
         if (activeAppId) {
             const session = sessions.find(s => s.sourceAppId === activeAppId);
             if (session && session.playback && currentMetadata.status === 'Paused') {
@@ -176,6 +146,6 @@ try {
     }, 2000);
 
 } catch (err) {
-    console.error('[SMTC Worker] Erro fatal no monitor:', err);
+    console.error('[SMTC Worker] Fatal error in monitor:', err);
     throw err;
 }
