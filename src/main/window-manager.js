@@ -35,6 +35,7 @@ class WindowManager {
             alwaysOnTop: true,
             skipTaskbar: true,
             resizable: true,
+            ...(process.platform === 'linux' ? { type: 'toolbar' } : {}),
             webPreferences: {
                 nodeIntegration: true,
                 contextIsolation: false

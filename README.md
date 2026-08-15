@@ -58,7 +58,19 @@ To track menu music and gameplay accurately:
 ## 🛠️ Installation & Execution
 
 ### 1. Prerequisites
-Make sure you have [Node.js](https://nodejs.org/) installed.
+Make sure you have [Node.js](https://nodejs.org/) (v18+) installed.
+
+**Linux users:** Install `playerctl` for media detection:
+```bash
+# Debian/Ubuntu
+sudo apt install playerctl
+
+# Fedora
+sudo dnf install playerctl
+
+# Arch
+sudo pacman -S playerctl
+```
 
 ### 2. Install Dependencies
 Run the following command in the project directory:
@@ -73,10 +85,16 @@ npm start
 ```
 
 ### 4. Build Executables
-To package the app into a single standalone executable:
+To package the app into a standalone executable:
 ```bash
+# Windows (portable .exe)
 npm run build-win
+
+# Linux (AppImage)
+npm run build-linux
 ```
+
+> **Note:** Pre-built releases for both Windows and Linux are automatically generated via GitHub Actions CI/CD. Check the [Releases](https://github.com/whithil/NanoLyrics/releases) page.
 
 ---
 

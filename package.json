@@ -5,26 +5,50 @@
   "main": "src/main/main.js",
   "scripts": {
     "start": "electron .",
-    "build-win": "electron-builder --win --x64"
+    "build-win": "electron-builder --win --x64",
+    "build-linux": "electron-builder --linux --x64",
+    "build-all": "electron-builder --win --linux --x64"
   },
   "build": {
-    "appId": "com.seuapp.id",
+    "appId": "com.whithil.nanolyrics",
     "productName": "NanoLyrics",
+    "directories": {
+      "output": "dist"
+    },
+    "files": [
+      "src/**/*",
+      "assets/**/*",
+      "locales/**/*",
+      "plugins/**/*",
+      "package.json"
+    ],
     "win": {
       "target": "portable",
       "icon": "assets/icon.ico"
+    },
+    "linux": {
+      "target": ["AppImage"],
+      "icon": "assets/icon.png",
+      "category": "Audio",
+      "desktop": {
+        "entry": {
+          "Name": "NanoLyrics",
+          "Comment": "Ultra-lightweight Synced Lyrics Overlay Widget",
+          "StartupWMClass": "NanoLyrics"
+        }
+      }
     }
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "type": "commonjs",
-  "dependencies": {
+  "dependencies": {},
+  "optionalDependencies": {
     "@coooookies/windows-smtc-monitor": "^1.0.12"
   },
   "devDependencies": {
     "electron": "^42.3.0",
-    "electron-builder": "^26.8.1",
-    "electron-packager": "^17.1.2"
+    "electron-builder": "^26.8.1"
   }
 }

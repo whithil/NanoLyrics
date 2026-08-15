@@ -1,7 +1,4 @@
 const EventEmitter = require('events');
-const WindowsMonitor = require('./monitors/windows-monitor');
-const LinuxMonitor = require('./monitors/linux-monitor');
-const MacOSMonitor = require('./monitors/macos-monitor');
 
 class MediaMonitor extends EventEmitter {
     constructor() {
@@ -20,10 +17,13 @@ class MediaMonitor extends EventEmitter {
     init() {
         const platform = process.platform;
         if (platform === 'win32') {
+            const WindowsMonitor = require('./monitors/windows-monitor');
             this.monitor = new WindowsMonitor();
         } else if (platform === 'linux') {
+            const LinuxMonitor = require('./monitors/linux-monitor');
             this.monitor = new LinuxMonitor();
         } else if (platform === 'darwin') {
+            const MacOSMonitor = require('./monitors/macos-monitor');
             this.monitor = new MacOSMonitor();
         }
 
