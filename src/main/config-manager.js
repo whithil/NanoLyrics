@@ -14,8 +14,8 @@ const DEFAULT_HOTKEYS = {
 const DEFAULT_BUILTIN_REGEX_RULES = [
     {
         id: 'youtube_music',
-        name: 'YouTube Music Suffix',
-        pattern: '\\s*\\|\\s*YouTube Music',
+        name: 'YouTube Music Prefix & Suffix',
+        pattern: '^\\s*YouTube Music\\s*[-–—|]\\s*|\\s*[-–—|]\\s*YouTube Music\\s*$|\\s*\\|\\s*YouTube Music',
         replacement: '',
         flags: 'gi'
     },

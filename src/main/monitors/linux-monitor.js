@@ -27,7 +27,7 @@ class LinuxMonitor extends EventEmitter {
     }
 
     startFollowMode() {
-        const format = '{{title}}||{{artist}}||{{position}}||{{mpris:length}}||{{status}}';
+        const format = '{{title}}||{{artist}}||{{position}}||{{mpris:length}}||{{status}}||{{albumArtist}}';
 
         // playerctl --follow emits a line on every metadata/status change
         this.followProcess = spawn('playerctl', [
@@ -74,7 +74,7 @@ class LinuxMonitor extends EventEmitter {
     }
 
     poll() {
-        const cmd = 'playerctl metadata --format "{{title}}||{{artist}}||{{position}}||{{mpris:length}}||{{status}}"';
+        const cmd = 'playerctl metadata --format "{{title}}||{{artist}}||{{position}}||{{mpris:length}}||{{status}}||{{albumArtist}}"';
         exec(cmd, (err, stdout) => {
             if (err || !stdout.trim()) return;
             this.parseLine(stdout.trim());
@@ -83,7 +83,7 @@ class LinuxMonitor extends EventEmitter {
 
     pollPosition() {
         // Lightweight position-only poll for smooth lyrics sync
-        const cmd = 'playerctl metadata --format "{{title}}||{{artist}}||{{position}}||{{mpris:length}}||{{status}}"';
+        const cmd = 'playerctl metadata --format "{{title}}||{{artist}}||{{position}}||{{mpris:length}}||{{status}}||{{albumArtist}}"';
         exec(cmd, (err, stdout) => {
             if (err || !stdout.trim()) return;
             this.parseLine(stdout.trim());
@@ -96,7 +96,7 @@ class LinuxMonitor extends EventEmitter {
 
         const data = {
             title: parts[0],
-            artist: parts[1],
+            artist: parts[1] || parts[5] || '',
             position: parseFloat(parts[2]) / 1000000, // microseconds → seconds
             duration: parseFloat(parts[3]) / 1000000,
             status: parts[4]

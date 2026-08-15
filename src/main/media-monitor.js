@@ -47,6 +47,18 @@ class MediaMonitor extends EventEmitter {
         const isPlaying = (status === 'Playing' || status === 'playing');
         const now = Date.now();
 
+        // If artist is 'YouTube Music' or 'YouTube', treat as empty so we can extract real artist
+        if (artist.toLowerCase() === 'youtube music' || artist.toLowerCase() === 'youtube') {
+            artist = '';
+        }
+
+        // Clean YouTube Music prefix/suffix before splitting 'Artist - Title'
+        title = title
+            .replace(/^\s*YouTube Music\s*[-–—|]\s*/gi, '')
+            .replace(/\s*[-–—|]\s*YouTube Music\s*$/gi, '')
+            .replace(/\s*\|\s*YouTube Music/gi, '')
+            .trim();
+
         // Fallback: extract artist from "Artist - Title"
         if (!artist && title.includes(' - ')) {
             const parts = title.split(' - ');
