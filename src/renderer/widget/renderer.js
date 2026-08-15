@@ -205,6 +205,7 @@ ipcRenderer.on('media-update', (e, d) => {
     }
     if (d.savedOffset !== undefined) {
         syncOffset = d.savedOffset;
+        updateSyncDisplay();
     }
 });
 
@@ -218,6 +219,7 @@ ipcRenderer.on('sync-adjust', (e, offset) => {
     syncOffset = offset;
     currentTimer = Math.max(0, mediaTime + syncOffset);
     lastUpdateTimestamp = performance.now();
+    updateSyncDisplay();
 });
 
 ipcRenderer.on('toggle-edit-mode', (e, locked) => {
@@ -232,11 +234,21 @@ ipcRenderer.on('apply-translations', (e, data) => {
     applyTranslations(data);
 });
 
+function updateSyncDisplay() {
+    const el = document.getElementById('sync-offset-display');
+    if (!el) return;
+    const sign = syncOffset > 0 ? '+' : '';
+    el.innerText = `Sync: ${sign}${syncOffset.toFixed(1)}s`;
+}
+
 // Initial Setup
 document.getElementById('btn-settings').onclick = () => ipcRenderer.send('open-settings');
 document.getElementById('btn-lock').onclick = () => ipcRenderer.send('toggle-lock-request');
 document.getElementById('btn-help').onclick = () => ipcRenderer.send('open-help');
+document.getElementById('btn-sync-rewind').onclick = () => ipcRenderer.send('adjust-sync-request', -0.5);
+document.getElementById('btn-sync-advance').onclick = () => ipcRenderer.send('adjust-sync-request', 0.5);
 
+updateSyncDisplay();
 requestAnimationFrame(updateSync);
 
 // Request initial config

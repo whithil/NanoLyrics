@@ -14,9 +14,14 @@
     <div id="edit-overlay">
         <button id="btn-help" class="help-btn" title="Help">?</button>
         <h3 id="edit-mode-title">Edit Mode (Drag to Move)</h3>
-        <div>
+        <div class="edit-btn-group">
             <button class="btn" id="btn-settings">⚙️ Settings</button>
             <button class="btn" id="btn-lock" style="background: var(--active-color); color: #000;">🔒 Lock</button>
+        </div>
+        <div class="sync-bar">
+            <button class="btn sync-btn" id="btn-sync-rewind" title="Rewind sync (-0.5s)">⏪ -0.5s</button>
+            <span class="sync-offset-text" id="sync-offset-display">Sync: 0.0s</span>
+            <button class="btn sync-btn" id="btn-sync-advance" title="Advance sync (+0.5s)">+0.5s ⏩</button>
         </div>
         <div id="hotkey-helper">
             <!-- Dynamically populated chips -->

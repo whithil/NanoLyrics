@@ -124,6 +124,7 @@ function adjustSync(delta) {
 // --- [ IPC HANDLING ] ---
 
 ipcMain.on('toggle-lock-request', () => windowManager.toggleLock());
+ipcMain.on('adjust-sync-request', (event, delta) => adjustSync(delta));
 ipcMain.on('open-settings', () => windowManager.openSettingsWindow());
 ipcMain.on('close-title-parts', () => windowManager.closeTitlePartsWindow());
 ipcMain.on('open-external', (event, url) => shell.openExternal(url));

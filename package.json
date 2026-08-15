@@ -30,11 +30,13 @@
       "target": ["AppImage"],
       "icon": "assets/icon.png",
       "category": "Audio",
+      "executableName": "nanolyrics",
+      "artifactName": "nanolyrics.${ext}",
       "desktop": {
         "entry": {
           "Name": "NanoLyrics",
           "Comment": "Ultra-lightweight Synced Lyrics Overlay Widget",
-          "StartupWMClass": "NanoLyrics"
+          "StartupWMClass": "nanolyrics"
         }
       }
     }
