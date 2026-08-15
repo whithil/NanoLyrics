@@ -71,6 +71,9 @@ function applyConfig(config) {
     // Hotkeys
     renderHotkeys();
 
+    // Regex Rules
+    renderRegexRules();
+
     // Trigger Initial Preview
     updatePreview();
 
@@ -269,6 +272,14 @@ function applyTranslations(data) {
     document.getElementById('plugins-how-it-works-desc').innerText = t('settings.plugins_how_it_works_desc');
     document.getElementById('language-title').innerText = t('settings.language');
     document.getElementById('language-auto').innerText = t('settings.language_auto');
+    document.getElementById('regex-rules-title').innerText = t('settings.regex_rules_title');
+    document.getElementById('regex-rules-hint').innerText = t('settings.regex_rules_hint');
+    document.getElementById('builtin-rules-label').innerText = t('settings.builtin_rules');
+    document.getElementById('custom-rules-label').innerText = t('settings.custom_rules');
+    document.getElementById('addCustomRuleBtn').innerText = t('settings.add_custom_rule');
+    document.getElementById('test-rules-title').innerText = t('settings.test_rules_title');
+    document.getElementById('regexTestInput').placeholder = t('settings.test_input_placeholder');
+    document.getElementById('test-result-label').innerText = t('settings.test_result_label');
     document.getElementById('cache-mgmt-title').innerText = t('settings.cache_mgmt');
     document.getElementById('lrc-cache-label').innerText = t('settings.synced_lyrics');
     document.getElementById('overrides-cache-label').innerText = t('settings.title_parts_overrides');
@@ -288,6 +299,148 @@ function applyTranslations(data) {
 document.getElementById('appLanguage').onchange = (e) => {
     ipcRenderer.send('set-language', e.target.value);
 };
+
+const BUILTIN_REGEX_RULES = [
+    {
+        id: 'youtube_music',
+        name: 'YouTube Music Suffix',
+        pattern: '\\s*\\|\\s*YouTube Music',
+        replacement: '',
+        flags: 'gi'
+    },
+    {
+        id: 'video_tags',
+        name: 'Common Video Tags (Official Video, Lyric Video, etc.)',
+        pattern: '\\s*[\\(\\[][^\\)\\]]*(official|lyric|audio|remastered|video)[^\\)\\]]*[\\)\\]]',
+        replacement: '',
+        flags: 'gi'
+    }
+];
+
+let currentCustomRules = [];
+
+function renderRegexRules() {
+    const disabledBuiltins = appConfig.disabledBuiltinRegexRules || [];
+    const builtinContainer = document.getElementById('builtin-rules-list');
+    if (builtinContainer) {
+        builtinContainer.innerHTML = '';
+        BUILTIN_REGEX_RULES.forEach(rule => {
+            const isEnabled = !disabledBuiltins.includes(rule.id);
+            const item = document.createElement('div');
+            item.className = 'regex-rule-item';
+            item.innerHTML = `
+                <div class="rule-info">
+                    <span class="rule-name">${rule.name}</span>
+                    <span class="rule-pattern">Regex: /${rule.pattern}/${rule.flags}</span>
+                </div>
+                <label class="switch">
+                    <input type="checkbox" class="builtin-rule-toggle" data-id="${rule.id}" ${isEnabled ? 'checked' : ''}>
+                    <span class="slider"></span>
+                </label>
+            `;
+            item.querySelector('.builtin-rule-toggle').onchange = () => updateRegexSandbox();
+            builtinContainer.appendChild(item);
+        });
+    }
+
+    currentCustomRules = appConfig.customRegexRules ? JSON.parse(JSON.stringify(appConfig.customRegexRules)) : [];
+    renderCustomRulesList();
+    updateRegexSandbox();
+}
+
+function renderCustomRulesList() {
+    const container = document.getElementById('custom-rules-list');
+    if (!container) return;
+    container.innerHTML = '';
+
+    if (currentCustomRules.length === 0) {
+        container.innerHTML = `<div style="font-size: 11px; color: #666; font-style: italic; padding: 4px 0;">No custom rules added yet.</div>`;
+        return;
+    }
+
+    currentCustomRules.forEach((rule, index) => {
+        const row = document.createElement('div');
+        row.className = 'custom-rule-row';
+        row.innerHTML = `
+            <label class="checkbox-label" style="margin: 0;">
+                <input type="checkbox" class="custom-rule-enabled" ${rule.enabled !== false ? 'checked' : ''}>
+            </label>
+            <input type="text" class="custom-rule-name" placeholder="Name / Note" value="${escapeHtml(rule.name || '')}" style="width: 100px;">
+            <input type="text" class="custom-rule-pattern" placeholder="Pattern (e.g. \\s*\\|.*)" value="${escapeHtml(rule.pattern || '')}" style="flex-grow: 1;">
+            <input type="text" class="custom-rule-replacement" placeholder="Replace" value="${escapeHtml(rule.replacement || '')}" style="width: 60px;">
+            <input type="text" class="custom-rule-flags" placeholder="Flags" value="${escapeHtml(rule.flags || 'gi')}" style="width: 30px; text-align: center;">
+            <button class="btn-icon-danger remove-custom-rule-btn" data-index="${index}" title="Remove">✕</button>
+        `;
+
+        row.querySelector('.custom-rule-enabled').onchange = (e) => { currentCustomRules[index].enabled = e.target.checked; updateRegexSandbox(); };
+        row.querySelector('.custom-rule-name').oninput = (e) => { currentCustomRules[index].name = e.target.value; };
+        row.querySelector('.custom-rule-pattern').oninput = (e) => { currentCustomRules[index].pattern = e.target.value; updateRegexSandbox(); };
+        row.querySelector('.custom-rule-replacement').oninput = (e) => { currentCustomRules[index].replacement = e.target.value; updateRegexSandbox(); };
+        row.querySelector('.custom-rule-flags').oninput = (e) => { currentCustomRules[index].flags = e.target.value; updateRegexSandbox(); };
+        row.querySelector('.remove-custom-rule-btn').onclick = () => {
+            currentCustomRules.splice(index, 1);
+            renderCustomRulesList();
+            updateRegexSandbox();
+        };
+
+        container.appendChild(row);
+    });
+}
+
+function escapeHtml(str) {
+    return (str || '').replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+}
+
+function updateRegexSandbox() {
+    const testInputEl = document.getElementById('regexTestInput');
+    const resultEl = document.getElementById('regexTestResult');
+    if (!testInputEl || !resultEl) return;
+
+    let input = testInputEl.value;
+    if (!input) {
+        resultEl.innerText = '';
+        return;
+    }
+
+    const disabledBuiltins = Array.from(document.querySelectorAll('.builtin-rule-toggle'))
+        .filter(cb => !cb.checked)
+        .map(cb => cb.getAttribute('data-id'));
+
+    let activeRules = BUILTIN_REGEX_RULES.filter(r => !disabledBuiltins.includes(r.id));
+
+    currentCustomRules.forEach(r => {
+        if (r.enabled !== false && r.pattern) {
+            activeRules.push(r);
+        }
+    });
+
+    let cleaned = input;
+    for (const rule of activeRules) {
+        if (!rule.pattern) continue;
+        try {
+            const rx = new RegExp(rule.pattern, rule.flags || 'gi');
+            cleaned = cleaned.replace(rx, rule.replacement !== undefined ? rule.replacement : '');
+        } catch (e) {
+            // invalid regex, ignore during preview
+        }
+    }
+
+    resultEl.innerText = cleaned.replace(/\s+/g, ' ').trim();
+}
+
+document.getElementById('addCustomRuleBtn').onclick = () => {
+    currentCustomRules.push({
+        id: 'rule_' + Date.now(),
+        name: '',
+        pattern: '',
+        replacement: '',
+        flags: 'gi',
+        enabled: true
+    });
+    renderCustomRulesList();
+};
+
+document.getElementById('regexTestInput').oninput = () => updateRegexSandbox();
 
 function renderHotkeys() {
     if (!appConfig.hotkeys) return;
@@ -358,6 +511,17 @@ ipcRenderer.on('cache-info', (e, info) => {
 // Save Logic
 document.getElementById('saveBtn').onclick = () => {
     const disabledPlugins = Array.from(document.querySelectorAll('.plugin-toggle')).filter(cb => !cb.checked).map(cb => cb.getAttribute('data-id'));
+    const disabledBuiltinRegexRules = Array.from(document.querySelectorAll('.builtin-rule-toggle')).filter(cb => !cb.checked).map(cb => cb.getAttribute('data-id'));
+    
+    const customRegexRules = currentCustomRules.map(r => ({
+        id: r.id || 'rule_' + Date.now(),
+        name: r.name || '',
+        pattern: r.pattern || '',
+        replacement: r.replacement || '',
+        flags: r.flags || 'gi',
+        enabled: r.enabled !== false
+    })).filter(r => r.pattern.trim().length > 0);
+
     const config = {
         fontFamily: document.getElementById('fontFamily').value,
         fontWeight: parseInt(document.getElementById('fontWeight').value),
@@ -384,7 +548,9 @@ document.getElementById('saveBtn').onclick = () => {
         widgetOpacity: parseFloat(document.getElementById('widgetOpacity').value),
         backgroundImage: document.getElementById('backgroundImage').value,
         borderImage: document.getElementById('borderImage').value,
-        disabledPlugins: disabledPlugins
+        disabledPlugins: disabledPlugins,
+        disabledBuiltinRegexRules: disabledBuiltinRegexRules,
+        customRegexRules: customRegexRules
     };
     ipcRenderer.send('save-settings', config);
 };

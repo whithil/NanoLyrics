@@ -11,6 +11,23 @@ const DEFAULT_HOTKEYS = {
     toggleTitleParts: 'CommandOrControl+Shift+P'
 };
 
+const DEFAULT_BUILTIN_REGEX_RULES = [
+    {
+        id: 'youtube_music',
+        name: 'YouTube Music Suffix',
+        pattern: '\\s*\\|\\s*YouTube Music',
+        replacement: '',
+        flags: 'gi'
+    },
+    {
+        id: 'video_tags',
+        name: 'Common Video Tags (Official Video, Lyric Video, etc.)',
+        pattern: '\\s*[\\(\\[][^\\)\\]]*(official|lyric|audio|remastered|video)[^\\)\\]]*[\\)\\]]',
+        replacement: '',
+        flags: 'gi'
+    }
+];
+
 class ConfigManager {
     constructor() {
         this.configPath = path.join(app.getPath('userData'), CONFIG_FILE);
@@ -44,7 +61,9 @@ class ConfigManager {
             backgroundImage: '',
             borderImage: '',
             disabledPlugins: [],
-            language: null // null means auto-detect
+            language: null, // null means auto-detect
+            disabledBuiltinRegexRules: [],
+            customRegexRules: []
         };
         this.loadConfig();
     }
@@ -122,6 +141,26 @@ class ConfigManager {
         } catch (e) {
             console.error('Error saving track metadata:', e);
         }
+    }
+
+    getBuiltinRegexRules() {
+        return DEFAULT_BUILTIN_REGEX_RULES;
+    }
+
+    getActiveRegexRules() {
+        const config = this.getConfig();
+        const disabledBuiltins = config.disabledBuiltinRegexRules || [];
+        const customRules = config.customRegexRules || [];
+
+        const builtins = DEFAULT_BUILTIN_REGEX_RULES
+            .filter(rule => !disabledBuiltins.includes(rule.id))
+            .map(rule => ({ ...rule, isBuiltin: true }));
+
+        const customs = customRules
+            .filter(rule => rule.enabled !== false && rule.pattern)
+            .map(rule => ({ ...rule, isBuiltin: false }));
+
+        return [...builtins, ...customs];
     }
 }
 

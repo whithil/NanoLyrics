@@ -163,6 +163,34 @@
                 </div>
             </div>
             <div class="section">
+                <h3 id="regex-rules-title">Title Filter & Regex Rules</h3>
+                <p id="regex-rules-hint" style="font-size: 11px; color: #888; margin-bottom: 12px; line-height: 1.4;"></p>
+                
+                <!-- Built-in Rules -->
+                <div style="margin-bottom: 12px;">
+                    <label id="builtin-rules-label" style="color: #39FF14; font-size: 11px; margin-bottom: 6px;">Built-in Rules</label>
+                    <div id="builtin-rules-list"></div>
+                </div>
+
+                <!-- Custom Rules -->
+                <div style="margin-bottom: 12px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+                        <label id="custom-rules-label" style="color: #39FF14; font-size: 11px; margin: 0;">Custom User Rules</label>
+                        <button class="tool-btn" id="addCustomRuleBtn" style="width: auto; padding: 0 10px; font-size: 11px; height: 24px; font-weight: normal;">+ Add Rule</button>
+                    </div>
+                    <div id="custom-rules-list"></div>
+                </div>
+
+                <!-- Live Test Sandbox -->
+                <div style="background: rgba(0,0,0,0.25); padding: 10px; border-radius: 6px; border: 1px solid #333;">
+                    <label id="test-rules-title" style="color: #aaa; margin-bottom: 6px;">Test Rules (Live Sandbox)</label>
+                    <input type="text" id="regexTestInput" class="designer-input" style="width: 100%; box-sizing: border-box; margin-bottom: 6px;" placeholder="Test title, e.g. Song Name - Artist | YouTube Music">
+                    <div style="font-size: 11px; color: #888;">
+                        <span id="test-result-label">Cleaned Result: </span><span id="regexTestResult" style="color: #39FF14; font-weight: bold;"></span>
+                    </div>
+                </div>
+            </div>
+            <div class="section">
                 <h3 id="cache-mgmt-title">Cache & Local File Management</h3>
                 <div class="cache-row">
                     <div>

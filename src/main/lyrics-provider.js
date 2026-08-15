@@ -10,10 +10,22 @@ class LyricsProvider {
 
     cleanMusicTitle(title) {
         if (!title) return '';
-        return title
-            .replace(/[^\w\s]*\s*(official\s+\w+|original\s+\w+|lyric\s+video|full\s+ver)\s*[^\w\s]*/gi, '')
-            .replace(/\s+/g, ' ')
-            .trim();
+        let cleaned = title;
+        try {
+            const rules = configManager.getActiveRegexRules();
+            for (const rule of rules) {
+                if (!rule.pattern) continue;
+                try {
+                    const regex = new RegExp(rule.pattern, rule.flags || 'gi');
+                    cleaned = cleaned.replace(regex, rule.replacement !== undefined ? rule.replacement : '');
+                } catch (err) {
+                    console.warn(`[LyricsProvider] Invalid regex pattern "${rule.pattern}":`, err.message);
+                }
+            }
+        } catch (e) {
+            console.error('[LyricsProvider] Error in title regex filtering:', e);
+        }
+        return cleaned.replace(/\s+/g, ' ').trim();
     }
 
     async fetchLyrics(title, artist, duration, customQuery = null) {
