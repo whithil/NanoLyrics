@@ -35,7 +35,6 @@ class WindowManager {
             alwaysOnTop: true,
             skipTaskbar: true,
             resizable: true,
-            ...(process.platform === 'linux' ? { type: 'toolbar' } : {}),
             webPreferences: {
                 nodeIntegration: true,
                 contextIsolation: false
@@ -44,7 +43,7 @@ class WindowManager {
 
         this.mainWindow.setVisibleOnAllWorkspaces(true, { visibleOnFullScreen: true });
         this.mainWindow.setAlwaysOnTop(true, 'screen-saver');
-        this.mainWindow.setIgnoreMouseEvents(this.isLocked, { forward: true });
+        this.applyIgnoreMouseEvents(this.isLocked);
 
         const indexPath = path.join(__dirname, '../renderer/widget/index.html');
         this.mainWindow.loadFile(indexPath);
@@ -54,6 +53,17 @@ class WindowManager {
         this.mainWindow.on('move', () => this.debounceSavePosition());
         
         this.mainWindow.on('closed', () => { this.mainWindow = null; });
+    }
+
+    applyIgnoreMouseEvents(ignore) {
+        if (!this.mainWindow) return;
+        // { forward: true } is only supported on Windows/macOS.
+        // On Linux/KWin, passing { forward: true } causes setIgnoreMouseEvents to fail or be ignored.
+        if (process.platform === 'win32' || process.platform === 'darwin') {
+            this.mainWindow.setIgnoreMouseEvents(ignore, { forward: true });
+        } else {
+            this.mainWindow.setIgnoreMouseEvents(ignore);
+        }
     }
 
     debounceSavePosition() {
@@ -78,7 +88,7 @@ class WindowManager {
     toggleLock() {
         this.isLocked = !this.isLocked;
         if (this.mainWindow) {
-            this.mainWindow.setIgnoreMouseEvents(this.isLocked, { forward: true });
+            this.applyIgnoreMouseEvents(this.isLocked);
             this.mainWindow.setAlwaysOnTop(true, 'screen-saver');
             this.mainWindow.webContents.send('toggle-edit-mode', this.isLocked);
         }
@@ -90,7 +100,7 @@ class WindowManager {
         if (this.isWidgetHidden) {
             this.mainWindow.show();
             this.mainWindow.setAlwaysOnTop(true, 'screen-saver');
-            if (this.isLocked) this.mainWindow.setIgnoreMouseEvents(true, { forward: true });
+            if (this.isLocked) this.applyIgnoreMouseEvents(true);
             this.isWidgetHidden = false;
         } else {
             this.mainWindow.hide();
